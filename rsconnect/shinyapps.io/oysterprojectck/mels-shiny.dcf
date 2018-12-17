@@ -1,0 +1,13 @@
+name: mels-shiny
+title:
+username:
+account: oysterprojectck
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 311495
+bundleId: 1406048
+url: https://oysterprojectck.shinyapps.io/mels-shiny/
+when: 1527887379.86229
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|2017_lakewatch_labresults.csv|allresults.csv|dat.csv|dat_test.csv|data_script.R|dis.csv|full-data.csv|Hydro_Flow_Duration_Curve_Apalach.r|LC WQ points.txt|Levy_Cedar_Key_Master1.csv|README.md|river_box.png|river_discharge.R|river_discharge_fw.R|river_discharge_fw2.R|river_histo.png|river_linear.png|shiny.html|shiny_html.Rmd|Thumbs.db|data/2017_lakewatch_labresults.csv|data/allresults.csv|data/dat.csv|data/dat_test.csv|data/dis.csv|data/full-data.csv|data/LC WQ points.txt|data/Levy_Cedar_Key_Master1.csv|test/app.R
