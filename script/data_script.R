@@ -52,6 +52,10 @@ wq<- wq %>%
 wq<-wq %>% 
   filter(!(Site == 3 & Salinity < 4))
 
+## Removing any values over 40 ppt
+wq<-wq %>% 
+  filter(!(Salinity > 40))
+
 
 #Writting as a .csv for the Shiny App
 write.csv(wq,file = "wq_app/data/wq.csv")
