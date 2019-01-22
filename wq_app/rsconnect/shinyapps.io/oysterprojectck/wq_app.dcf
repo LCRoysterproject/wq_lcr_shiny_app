@@ -5,8 +5,8 @@ account: oysterprojectck
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 379576
-bundleId: 1803445
+bundleId: 1829533
 url: https://oysterprojectck.shinyapps.io/wq_app/
-when: 1546974968.12359
+when: 1548177956.79112
 asMultiple: FALSE
 asStatic: FALSE
