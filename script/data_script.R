@@ -60,6 +60,12 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 10 & Date < "2019-03-08 15:03:00"))
 
+wq<-wq %>% 
+  filter(!(Site == 11))
+
+wq<-wq %>% 
+  filter(!(Site == 21))
+
 
 #Writting as a .csv for the Shiny App
 write.csv(wq,file = "wq_app/data/wq.csv")
