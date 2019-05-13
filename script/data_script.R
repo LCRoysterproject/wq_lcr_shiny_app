@@ -44,6 +44,10 @@ ggplot(data= wq,aes( x=Date, y= Salinity))+
   geom_point()+
   facet_wrap (~Site)
 
+## Removing any values over 40 ppt
+wq<-wq %>% 
+  filter(!(Salinity > 40))
+
 ## Removing dates where sensors were malfunctioning in Site 2, oyster growth
 wq<- wq %>% 
   filter(!(Site == 2 & Salinity < 0.5))
@@ -52,13 +56,12 @@ wq<- wq %>%
 wq<-wq %>% 
   filter(!(Site == 3 & Salinity < 4))
 
-## Removing any values over 40 ppt
-wq<-wq %>% 
-  filter(!(Salinity > 40))
-
 #removing site 10 for now
 wq<-wq %>% 
   filter(!(Site == 10 & Date < "2019-03-08 15:03:00"))
+
+wq<- wq %>% 
+  filter(!(Site == 2 & Date > "2019-04-27 19:00:00" & Date < "2019-05-06 14:00:00" ))
 
 wq<-wq %>% 
   filter(!(Site == 11))
