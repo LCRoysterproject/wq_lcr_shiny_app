@@ -9,6 +9,7 @@ library("lubridate")
 #Make sure to be on the project directory before starting the Shiny App
 
 lab <- read.csv("data/lab.csv", header= T) 
+wq <- read.csv("data/wq.csv", header= T) 
 
 wq$Date<- ymd_hms(wq$Date, tz="UTC") %>%
   round_date("hour")

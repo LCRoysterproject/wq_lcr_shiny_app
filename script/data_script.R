@@ -97,6 +97,9 @@ lab$Secchi<- (lab$Secchi/ 3.28)
 lab$Sensor_Type[lab$Sensor_Type == "4"] <- "LAKEWATCH"
 lab$Sensor_Type[lab$Sensor_Type == "5"] <- "YSI"
 
+lab<-lab %>% 
+  filter(!(Site == 0))
+
 #Writting as a .csv for the Shiny App
 write.csv(lab, file = "wq_app/data/lab.csv")
 
