@@ -52,6 +52,8 @@ ui <- fluidPage(
       
       h3("CONTINUOUS DATA"),
       
+      p("(continuous data first collected September 2017)"),
+      
       selectInput("site1", label= h4("SITE"), 
                   choices=c(unique(wq$Site) %>% sort()), selected = 1),
       
@@ -59,7 +61,7 @@ ui <- fluidPage(
                   choices=c("None" = 0, unique(wq$Site) %>% sort()), selected = 6),
       
       dateRangeInput("date",
-                     label =h4('DATE RANGE (30 days before current date)'),
+                     label =h4('DATE RANGE'),
                      start = Sys.Date() -30 , end = Sys.Date()),
 
       radioButtons("variable",
@@ -84,7 +86,7 @@ ui <- fluidPage(
       
       
       h3("DISCRETE DATA"),
-      p("Updated every 2 weeks for YSI, and every 4 months for LAKEWATCH"),
+      p("(updated every 2 weeks for YSI, and every 4 months for LAKEWATCH)"),
       
       
       #selectInput("site3", label= h4("Site"), 
