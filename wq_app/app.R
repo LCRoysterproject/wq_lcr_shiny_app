@@ -2,27 +2,17 @@ library("shiny")
 library("tidyverse")
 library("shinythemes")
 library("ggplot2")
-# library("scales")
-# library("gridExtra")
 library("lubridate")
 
 #Make sure to be on the project directory before starting the Shiny App
 
+#Reading in the files from the "data" tab
 lab <- read.csv("data/lab.csv", header= T) 
 wq <- read.csv("data/wq.csv", header= T) 
 
+#Updating the date zones to UTC for water quality and lab data
 wq$Date<- ymd_hms(wq$Date, tz="UTC") %>%
   round_date("hour")
-
-# Version 1
-#lab$Date <- lab$Date %>% ymd_hms(tz="EST")
-
-# Version 2
-# lab$Date <- lab$Date %>%
-#   ymd_hms() %>%
-#   date() %>%
-#   paste("12:00:00") %>%
-#   ymd_hms(tz="EST") # Assume all data taken midday regardless of recorded time
 
 lab$Date <- lab$Date %>%
   ymd_hms() %>%
@@ -32,7 +22,8 @@ lab$Date <- lab$Date %>%
 
 
 # Function to make factors with levels based on site input and not numerical
-# so that ggplot facet display the sequence correctly.
+# So that ggplot facet display the sequence correctly.
+
 factor_site_seq <- function (vec, site1, site2) {
   # The condition is required such that you don't declare levels of same values
   # or when they pick "none"
@@ -41,47 +32,59 @@ factor_site_seq <- function (vec, site1, site2) {
   } else f <- vec
   return(f)
 }
-#### Front 
+
+
+
+#### Front of the app, the user interface
 
 ui <- fluidPage(
-  
+  #Selecting a theme from pre-made shiny themes
   theme = shinytheme("yeti"),
   
+  #Creating the design and designations of the side bar, width=4 is too large and will not display the graphs correctly
   sidebarLayout(
     sidebarPanel(
       
+      h3("MAP OF SUWANNEE SOUND") ,
+      img(src="shiny_map.jpg", width="100%"),
+      
       width = 3,
       
-      h3("Continuous Data"),
+      h3("CONTINUOUS DATA"),
       
-      selectInput("site1", label= h4("Site"), 
+      selectInput("site1", label= h4("SITE"), 
                   choices=c(unique(wq$Site) %>% sort()), selected = 1),
       
-      selectInput("site2", label=h4("Comparison"), 
+      selectInput("site2", label=h4("COMPARISON SITE"), 
                   choices=c("None" = 0, unique(wq$Site) %>% sort()), selected = 6),
       
       dateRangeInput("date",
-                     label =h4('Date range'),
-                     start = "2017-01-01" , end = Sys.Date() + 7),
-      
-      checkboxInput("overlay", 
-                    label = "Overlay point sample data?",
-                    value = T),
-      
+                     label =h4('DATE RANGE (30 days before current date)'),
+                     start = Sys.Date() -30 , end = Sys.Date()),
+
       radioButtons("variable",
-                   label = h4("Observations"),
+                   label = h4("OBSERVATIONS"),
                    choices = list("Salinity (ppt)" = "Salinity",
                                   "Conductivity (mS/cm)"= "Conductivity",
                                   "Temperature (C)" = "Temperature"),
                    selected = "Salinity"),
       
       radioButtons("temp_res",
-                   label = "Temporal resolution",
+                   label = "TEMPORAL RESOLUTION",
                    choices = list("Hourly" = "Hourly",
                                   "Daily Mean" = "Daily"),
                    selected = "Hourly"),
       
-      h3("Discrete Data"),
+      
+      p("Please only select if you are viewing 'Hourly' in TEMPORAL RESOLUTION, not representational in 'Daily Mean'"),
+      
+      checkboxInput("overlay", 
+                    label = "Overlay point sample data?",
+                    value = T),
+      
+      
+      h3("DISCRETE DATA"),
+      p("Updated every 2 weeks for YSI, and every 4 months for LAKEWATCH"),
       
       
       #selectInput("site3", label= h4("Site"), 
@@ -91,7 +94,7 @@ ui <- fluidPage(
       #            choices=c("None" = 0,unique(lab$Site))),
       
       radioButtons("variable2",
-                   label = h4("Observations"),
+                   label = h4("OBSERVATIONS"),         
                    choices = list("Salinity (ppt)" = "Salinity",
                                   "Conductivity (mS/cm)"= "Conductivity",
                                   "Temperature (C)" = "Temperature",
@@ -102,17 +105,18 @@ ui <- fluidPage(
                    selected = c("Salinity"))),
     
     
-    
+    # The display of the main panel
     mainPanel(
       width = 9,
-      h1("Continuous monitoring data"),
+      h1("CONTINUOUS MONITORING DATA"),
       plotOutput("sensorplot", height = "600px"),
-      h1("Point sampling data"),
-      plotOutput("labplot", height = "600px"))
+      h1("POINT SAMPLING DATA"),
+      plotOutput("labplot", height = "600px")
+      
     
+    )
   )
 )
-
 #Debug
 # input <- list()
 # input$date <- c("2017-01-01", "2018-07-01")
@@ -135,17 +139,21 @@ server <- shinyServer(function(input, output) {
       filter(Site == site1 | Site == site2,
              Date >= startDate & Date <= endDate) %>% 
       select(Site, Date, Measure = input$variable)
+ 
     
     # Build a data table based on input daterange and temporal resolution
     # Note: We're building a table with all possible times first and merge it with
     # WQ table so that NAs and daterange of plot is preserved.
     # NAs are required for line plot
+    
+    
     if (input$temp_res == "Hourly") {
       d <- seq(startDate, endDate, by = "hour")
       df <- data.frame(Site = rep(c(site1, site2), each = length(d)),
                        Date = rep(d, 2)) %>%
         distinct() %>% 
         left_join(wq1)
+      
     } else if (input$temp_res == "Daily") {
       
       # Need to convert WQ from hourly to daily
@@ -174,13 +182,10 @@ server <- shinyServer(function(input, output) {
     sensorplot <- ggplot(df, aes(x = Date, y = Measure)) +
       ylab(input$variable) +
       geom_line() +
-      # scale_x_date(
-        # breaks = date_breaks("month") ,
-        # labels = date_format("%m/%Y")) +
       theme_gray(base_size = 14) +
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
       facet_wrap(~Site, ncol = 1, labeller = label_both) +
-      theme(strip.text = element_text(size=25))
+      theme(strip.text = element_text(size=30), axis.text = element_text(size=20), axis.title = element_text(size=20))
     
     
     # Add feature if we want to overlay the point sample data
@@ -195,11 +200,12 @@ server <- shinyServer(function(input, output) {
       
       if (input$temp_res == "Hourly") {
         sensorplot <- sensorplot + 
-          geom_point(data = lab1, aes(x = Date, y = Measure, colour = Sensor_Type), shape = 17, size = 3) +
-          scale_color_manual(name = "Method", values = c("red", "blue"))
+          geom_point(data = lab1, aes(x = Date, y = Measure, colour = Sensor_Type), shape = 17, size = 5) +
+          scale_color_manual(name = "Method", values = c("red", "blue")) 
+        
       } else if (input$temp_res == "Daily") {
         sensorplot <- sensorplot + 
-          geom_point(data = lab1, aes(x = date(Date), y = Measure, colour = Sensor_Type), shape = 17, size = 3) +
+          geom_point(data = lab1, aes(x = date(Date), y = Measure, colour = Sensor_Type), shape = 17, size = 5) +
           scale_color_manual(name = "Method", values = c("red", "blue"))
       }
       
@@ -226,7 +232,7 @@ server <- shinyServer(function(input, output) {
     # Use similar trick as we did in sensorplot (e.g. build a df)
     labplot <- ggplot(lab1, aes(x = Date, y = Measure, colour = Sensor_Type)) +
       ylab(input$variable2) +
-      geom_point(shape = 17, size = 3) +
+      geom_point(shape = 17, size = 5) +
       scale_color_manual(name = "Method", values = c("red", "blue")) +
       scale_x_datetime(
         #   breaks = date_breaks("month") ,
@@ -235,11 +241,12 @@ server <- shinyServer(function(input, output) {
       theme_gray(base_size = 14) +
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
       facet_wrap(~ Site, ncol = 1, labeller = label_both) +
-      theme(strip.text = element_text(size=25))
+      theme(strip.text = element_text(size=30), axis.text = element_text(size=20), axis.title = element_text(size=20))
       
     
     labplot
   })
+  
   
 })
 

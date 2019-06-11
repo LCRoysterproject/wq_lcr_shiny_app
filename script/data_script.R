@@ -39,11 +39,6 @@ wq$observation_datetime<- as.Date(wq$observation_datetime, tz="EST",usetz=TRUE)
 
 colnames(wq) <- c("ID", "Obs_Date", "In_Service", "Pressure", "Temperature", "Conductivity", "Salinity_OG", "Sound_velo",  "Site","Sensor_ID", "Salinity","Date")
 
-# A quick ggplot test
-ggplot(data= wq,aes( x=Date, y= Salinity))+
-  geom_point()+
-  facet_wrap (~Site)
-
 ## Removing any values over 40 ppt
 wq<-wq %>% 
   filter(!(Salinity > 40))
@@ -56,7 +51,7 @@ wq<- wq %>%
 wq<-wq %>% 
   filter(!(Site == 3 & Salinity < 4))
 
-#removing site 10 for now
+#Removing Site 10 values before a certain time of when the sensor was function
 wq<-wq %>% 
   filter(!(Site == 10 & Date < "2019-03-08 15:03:00"))
 
@@ -72,10 +67,9 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 0))
 
-
-
 #Writting as a .csv for the Shiny App
 write.csv(wq,file = "wq_app/data/wq.csv")
+
 
 
 ###Lakewatch Data, from the MySQL workbench
