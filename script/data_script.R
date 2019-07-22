@@ -72,7 +72,7 @@ write.csv(wq,file = "wq_app/data/wq.csv")
 
 
 
-###Lakewatch Data, from the MySQL workbench
+###Lakewatch and YSI Data, from the MySQL workbench
 
 
 #Connecting to Database to update file 
