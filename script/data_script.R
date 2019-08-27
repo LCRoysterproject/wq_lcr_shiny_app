@@ -43,23 +43,25 @@ colnames(wq) <- c("ID", "Obs_Date", "In_Service", "Pressure", "Temperature", "Co
 wq<-wq %>% 
   filter(!(Salinity > 40))
 
-## Removing dates where sensors were malfunctioning in Site 2, oyster growth
+## Removing dates where sensors were malfunctioning in Site 2, oyster growth from 10/31/2017- 12/1/2017
 wq<- wq %>% 
-  filter(!(Site == 2 & Salinity < 0.5))
-
-## Removing dates where sensors were malfunctioning in Site 3
-wq<-wq %>% 
-  filter(!(Site == 3 & Salinity < 4))
+  filter(!(Site == 2 > "2017-10-31 23:00:00" & Date < "2017-12-01 23:00:00" ))
 
 #Removing Site 10 values before a certain time of when the sensor was function
 wq<-wq %>% 
   filter(!(Site == 10 & Date < "2019-03-08 15:03:00"))
 
+#Removing this values because of removal and redeployment of sensor
 wq<- wq %>% 
   filter(!(Site == 2 & Date > "2019-04-27 19:00:00" & Date < "2019-05-06 14:00:00" ))
 
+#Removing values from site 6, sensor is faulty between July 16, 2019 to August 20, 2019, starting at 17:00 
+wq<- wq %>% 
+  filter(!(Site == 6 & Date > "2019-07-16 23:00:00" & Date < "2019-08-20 17:00:00" ))
+
+# Removing a flatline reading in the code 
 wq<-wq %>% 
-  filter(!(Site == 11))
+  filter(!(Site == 11 & Date > "2019-07-29 23:00:00" & Date < "2019-08-02 17:00:00"))
 
 wq<-wq %>% 
   filter(!(Site == 21))
