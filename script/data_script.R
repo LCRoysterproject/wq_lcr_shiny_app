@@ -69,6 +69,9 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 0))
 
+wq<-wq %>% 
+  filter(!(Site ==22))
+
 #Writting as a .csv for the Shiny App
 write.csv(wq,file = "wq_app/data/wq.csv")
 
