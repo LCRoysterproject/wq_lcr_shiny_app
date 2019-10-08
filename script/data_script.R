@@ -63,14 +63,21 @@ wq<- wq %>%
 wq<-wq %>% 
   filter(!(Site == 11 & Date > "2019-07-29 23:00:00" & Date < "2019-08-02 17:00:00"))
 
+# Removing a flatline reading in the code for site 9
 wq<-wq %>% 
-  filter(!(Site == 21))
+  filter(!(Site == 9 & Date > "2019-09-05 23:00:00" & Date < "2019-09-27 17:00:00"))
 
 wq<-wq %>% 
   filter(!(Site == 0))
 
+#Annalees sensors
+wq<-wq %>% 
+  filter(!(Site == 21))
 wq<-wq %>% 
   filter(!(Site ==22))
+wq<-wq %>% 
+  filter(!(Site ==22))
+
 
 #Writting as a .csv for the Shiny App
 write.csv(wq,file = "wq_app/data/wq.csv")
