@@ -63,12 +63,21 @@ wq<- wq %>%
 
 # Removing a flatline reading in the code 
 wq<-wq %>% 
-  filter(!(Site == 11 & Date > "2019-07-29 23:00:00" & Date < "2019-08-02 17:00:00"))
+  filter(!(Site == 11 & Date > "2019-07-29 23:00:00" & Date < "2019-08-02 23:00:00"))
 
 # Removing a flatline reading in the code for site 9
 wq<-wq %>% 
-  filter(!(Site == 9 & Date > "2019-09-05 23:00:00" & Date < "2019-09-27 17:00:00"))
+  filter(!(Site == 9 & Date > "2019-09-05 23:00:00" & Date < "2019-09-27 23:00:00"))
 
+#Removing observations from site 4, Flatiline in early September 
+wq<-wq %>% 
+  filter(!(Site == 4 & Date > "2019-08-28 23:00:00" & Date < "2019-09-10 23:00:00"))
+
+#Removing observations from site 2, Flatiline in early October 
+wq<-wq %>% 
+  filter(!(Site == 2 & Date > "2019-10-01 23:00:00" & Date < "2019-10-15 23:00:00"))
+
+#Removing all trial 
 wq<-wq %>% 
   filter(!(Site == 0))
 
