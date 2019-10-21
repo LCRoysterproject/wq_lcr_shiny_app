@@ -39,6 +39,8 @@ wq$observation_datetime<- as.Date(wq$observation_datetime, tz="EST",usetz=TRUE)
 
 colnames(wq) <- c("ID", "Obs_Date", "In_Service", "Pressure", "Temperature", "Conductivity", "Salinity_OG", "Sound_velo",  "Site","Sensor_ID", "Salinity","Date")
 
+write.csv(wq,file = "wq_app/data/wq_total.csv")
+
 ## Removing any values over 40 ppt
 wq<-wq %>% 
   filter(!(Salinity > 40))
