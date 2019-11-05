@@ -47,7 +47,7 @@ wq<-wq %>%
 
 ## Removing dates where sensors were malfunctioning in Site 2, oyster growth from 10/31/2017- 12/1/2017
 wq<- wq %>% 
-  filter(!(Site == 2 > "2017-10-31 23:00:00" & Date < "2017-12-01 23:00:00" ))
+  filter(!(Site == 2 & Date > "2017-10-31 23:00:00" & Date < "2017-12-01 23:00:00" ))
 
 #Removing Site 10 values before a certain time of when the sensor was function
 wq<-wq %>% 
@@ -73,6 +73,10 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 4 & Date > "2019-08-28 23:00:00" & Date < "2019-09-10 23:00:00"))
 
+#Removing observations from site 4, Flatiline in mid October
+wq<-wq %>% 
+  filter(!(Site == 4 & Date > "2019-10-14 23:00:00" & Date < "2019-11-04 23:00:00"))
+
 #Removing observations from site 2, Flatiline in early October 
 wq<-wq %>% 
   filter(!(Site == 2 & Date > "2019-10-01 23:00:00" & Date < "2019-10-15 23:00:00"))
@@ -81,13 +85,16 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 0))
 
+wq<-wq %>% 
+  filter(!(Site == 11))
+
 #Annalees sensors
 wq<-wq %>% 
   filter(!(Site == 21))
 wq<-wq %>% 
   filter(!(Site ==22))
 wq<-wq %>% 
-  filter(!(Site ==22))
+  filter(!(Site ==23))
 
 
 #Writting as a .csv for the Shiny App
