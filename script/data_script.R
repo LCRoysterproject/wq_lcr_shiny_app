@@ -81,6 +81,12 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 2 & Date > "2019-10-01 23:00:00" & Date < "2019-10-15 23:00:00"))
 
+
+#Removing observations from site $, Flatilined and muddy starting november 12- november 18
+wq<-wq %>% 
+  filter(!(Site == 4 & Date > "2019-11-11 23:00:00" & Date < "2019-11-18 23:00:00"))
+
+
 #Removing all trial 
 wq<-wq %>% 
   filter(!(Site == 0))
