@@ -124,8 +124,8 @@ colnames(lab) <- c("ID", "Date", "Phosphorus", "Nitrogen", "Chlorophyll", "Secch
 lab$Secchi<- (lab$Secchi/ 3.28)
 
 # We need to update the sensor_type to the correct names for facetting, 4= YSI and 5= Lakewatch 
-lab$Sensor_Type[lab$Sensor_Type == "4"] <- "LAKEWATCH"
-lab$Sensor_Type[lab$Sensor_Type == "5"] <- "YSI"
+lab$Sensor_Type[lab$Sensor_Type == "34"] <- "LAKEWATCH"
+lab$Sensor_Type[lab$Sensor_Type == "35"] <- "YSI"
 
 lab<-lab %>% 
   filter(!(Site == 0))
