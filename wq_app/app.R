@@ -3,12 +3,17 @@ library("tidyverse")
 library("shinythemes")
 library("ggplot2")
 library("lubridate")
+library("naniar")
 
 #Make sure to be on the project directory before starting the Shiny App
 
 #Reading in the files from the "data" tab
 lab <- read.csv("data/lab.csv", header= T) 
 wq <- read.csv("data/wq.csv", header= T) 
+
+#Removing all -999 from data frames
+lab[lab == -999] <- NA
+wq[wq == -999] <- NA
 
 #Updating the date zones to UTC for water quality and lab data
 wq$Date<- ymd_hms(wq$Date, tz="UTC") %>%
