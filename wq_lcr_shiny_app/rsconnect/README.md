@@ -1,0 +1,1 @@
+This is the `rsconnect` folder. This folder is created when publishing a Shiny App online thorugh shinyapps.io. This file should not be edited or deleted.  

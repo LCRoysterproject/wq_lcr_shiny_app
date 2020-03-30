@@ -1,0 +1,1 @@
+This is the `www` folder. This folder contains maps that are used in the water quality Shiny App.  
