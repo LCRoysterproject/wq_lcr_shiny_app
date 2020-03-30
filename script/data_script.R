@@ -1,12 +1,15 @@
-library("tidyverse")
 library("DBI")
-library("RMySQL")
-library("rsconnect")
 library("lubridate")
+library("RMySQL")
 library("RMariaDB")
+library("rsconnect")
+library("tidyverse")
 
 #Using the developer DBI, but RMariaDB is not available for the newest R version in developer mode
 #devtools::install_github("r-dbi/DBI")
+
+#Loading the .env file
+readRenviron(".env")
 
 
 # In case if there are too many connections open
@@ -17,9 +20,9 @@ lapply(dbListConnections(MySQL()), dbDisconnect)
 
 con <- dbConnect(RMariaDB::MariaDB(),
                  user="LCRoysterproject", 
-                 password="HLLV6Pske0vTzhIZfSya",
-                 dbname="LCRoysterproject", 
-                 host="ict-prod-hosting05.mysql.osg.ufl.edu", 
+                 password=Sys.getenv("password"),
+                 dbname=Sys.getenv("dbname"), 
+                 host=Sys.getenv("host"), 
                  port= 3359)
 
 # Listing all of the columns in the database
