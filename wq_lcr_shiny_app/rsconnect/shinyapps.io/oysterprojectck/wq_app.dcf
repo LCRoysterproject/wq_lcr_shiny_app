@@ -5,8 +5,14 @@ account: oysterprojectck
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 379576
+<<<<<<< HEAD:wq_lcr_shiny_app/rsconnect/shinyapps.io/oysterprojectck/wq_app.dcf
 bundleId: 2177674
 url: https://oysterprojectck.shinyapps.io/wq_app/
 when: 1561482932.63257
+=======
+bundleId: 2913152
+url: https://oysterprojectck.shinyapps.io/wq_app/
+when: 1584974444.75823
+>>>>>>> b44eed71aee5a526cf684c405dfa299c4c8c76b7:wq_app/rsconnect/shinyapps.io/oysterprojectck/wq_app.dcf
 asMultiple: FALSE
 asStatic: FALSE

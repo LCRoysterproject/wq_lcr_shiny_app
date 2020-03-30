@@ -3,6 +3,10 @@ library("tidyverse")
 library("shinythemes")
 library("ggplot2")
 library("lubridate")
+<<<<<<< HEAD:wq_lcr_shiny_app/app.R
+=======
+library("naniar")
+>>>>>>> b44eed71aee5a526cf684c405dfa299c4c8c76b7:wq_app/app.R
 
 #Make sure to be on the project directory before starting the Shiny App
 
@@ -10,6 +14,13 @@ library("lubridate")
 lab <- read.csv("data/lab.csv", header= T) 
 wq <- read.csv("data/wq.csv", header= T) 
 
+<<<<<<< HEAD:wq_lcr_shiny_app/app.R
+=======
+#Removing all -999 from data frames
+lab[lab == -999] <- NA
+wq[wq == -999] <- NA
+
+>>>>>>> b44eed71aee5a526cf684c405dfa299c4c8c76b7:wq_app/app.R
 #Updating the date zones to UTC for water quality and lab data
 wq$Date<- ymd_hms(wq$Date, tz="UTC") %>%
   round_date("hour")
