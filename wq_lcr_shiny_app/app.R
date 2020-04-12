@@ -3,10 +3,7 @@ library("tidyverse")
 library("shinythemes")
 library("ggplot2")
 library("lubridate")
-<<<<<<< HEAD:wq_lcr_shiny_app/app.R
-=======
 library("naniar")
->>>>>>> b44eed71aee5a526cf684c405dfa299c4c8c76b7:wq_app/app.R
 
 #Make sure to be on the project directory before starting the Shiny App
 
@@ -14,13 +11,10 @@ library("naniar")
 lab <- read.csv("data/lab.csv", header= T) 
 wq <- read.csv("data/wq.csv", header= T) 
 
-<<<<<<< HEAD:wq_lcr_shiny_app/app.R
-=======
 #Removing all -999 from data frames
 lab[lab == -999] <- NA
 wq[wq == -999] <- NA
 
->>>>>>> b44eed71aee5a526cf684c405dfa299c4c8c76b7:wq_app/app.R
 #Updating the date zones to UTC for water quality and lab data
 wq$Date<- ymd_hms(wq$Date, tz="UTC") %>%
   round_date("hour")
@@ -74,7 +68,7 @@ ui <- fluidPage(
       dateRangeInput("date",
                      label =h4('DATE RANGE'),
                      start = Sys.Date() -30 , end = Sys.Date()),
-
+      
       radioButtons("variable",
                    label = h4("OBSERVATIONS"),
                    choices = list("Salinity (ppt)" = "Salinity",
@@ -126,7 +120,7 @@ ui <- fluidPage(
       h1("POINT SAMPLING DATA"),
       plotOutput("labplot", height = "600px")
       
-    
+      
     )
   )
 )
@@ -152,7 +146,7 @@ server <- shinyServer(function(input, output) {
       filter(Site == site1 | Site == site2,
              Date >= startDate & Date <= endDate) %>% 
       select(Site, Date, Measure = input$variable)
- 
+    
     
     # Build a data table based on input daterange and temporal resolution
     # Note: We're building a table with all possible times first and merge it with
@@ -207,7 +201,7 @@ server <- shinyServer(function(input, output) {
         filter(Site == site1 | Site == site2,
                Date >= startDate & Date <= endDate) %>% 
         select(Site, Date, Measure = input$variable, Sensor_Type)
-     
+      
       # Same thing as we did for df$Site
       lab1$Site <- factor_site_seq(lab1$Site, site1, site2)
       
@@ -255,7 +249,7 @@ server <- shinyServer(function(input, output) {
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
       facet_wrap(~ Site, ncol = 1, labeller = label_both) +
       theme(strip.text = element_text(size=30), axis.text = element_text(size=20), axis.title = element_text(size=20))
-      
+    
     
     labplot
   })
