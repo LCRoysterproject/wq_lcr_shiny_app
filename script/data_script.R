@@ -1,18 +1,3 @@
-Skip to content
-Search or jump to.
-
-Pull requests
-Issues
-Marketplace
-Explore
-
-@melimore86 
-Code Issues 0 Pull requests 0 Projects 0 Actions Wiki Security Pulse Community
-wq_lcr_shiny_app/script/data_script.R
-@melimore86 melimore86 updating the sensor id for lakewatch and ysi because they were not co.
-9468cd8 on Mar 5
-137 lines (92 sloc)  4.24 KB
-
 library("tidyverse")
 library("DBI")
 library("RMySQL")
@@ -24,6 +9,10 @@ library("RMariaDB")
 #devtools::install_github("r-dbi/DBI")
 
 
+#Loading the .env file
+readRenviron(".env")
+
+
 # In case if there are too many connections open
 lapply(dbListConnections(MySQL()), dbDisconnect)
 
@@ -32,9 +21,9 @@ lapply(dbListConnections(MySQL()), dbDisconnect)
 
 con <- dbConnect(RMariaDB::MariaDB(),
                  user="LCRoysterproject", 
-                 password="HLLV6Pske0vTzhIZfSya",
-                 dbname="LCRoysterproject", 
-                 host="ict-prod-hosting05.mysql.osg.ufl.edu", 
+                 password=Sys.getenv("password"),
+                 dbname=Sys.getenv("dbname"), 
+                 host=Sys.getenv("host"), 
                  port= 3359)
 
 # Listing all of the columns in the database
@@ -101,6 +90,9 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 4 & Date > "2019-11-11 23:00:00" & Date < "2019-11-18 23:00:00"))
 
+#Removing all the observations from after 2020/04/09
+wq<-wq %>% 
+  filter(!(Date > "2020-04-10 23:00:00"))
 
 #Removing all trial 
 wq<-wq %>% 
