@@ -67,7 +67,7 @@ ui <- fluidPage(
       
       dateRangeInput("date",
                      label =h4('DATE RANGE'),
-                     start = Sys.Date() -30 , end = "2020-04-10"),
+                     start ="2020-03-10" , end = "2020-04-10"),
       
       radioButtons("variable",
                    label = h4("OBSERVATIONS"),
