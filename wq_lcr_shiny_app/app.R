@@ -44,20 +44,24 @@ factor_site_seq <- function (vec, site1, site2) {
 
 ui <- fluidPage(
   #Selecting a theme from pre-made shiny themes
-  theme = shinytheme("yeti"),
+  theme = shinytheme("united"),
   
   #Creating the design and designations of the side bar, width=4 is too large and will not display the graphs correctly
   sidebarLayout(
     sidebarPanel(
       
-      h3("MAP OF SUWANNEE SOUND") ,
-      img(src="shiny_map.jpg", width="100%"),
+      #h3("MAP OF SUWANNEE SOUND") ,
+      #img(src="shiny_map.jpg", width="100%"),
       
       width = 3,
       
-      h3("CONTINUOUS DATA"),
+      h3("DATA LOGGER"),
       
-      p("(continuous data first collected September 2017)"),
+      p("(hourly observations collected starting September 2017)"),
+      
+      dateRangeInput("date",
+                     label =h4('DATE RANGE'),
+                     start ="2020-03-10" , end = "2020-04-10"),
       
       selectInput("site1", label= h4("SITE"), 
                   choices=c(unique(wq$Site) %>% sort()), selected = 1),
@@ -65,9 +69,6 @@ ui <- fluidPage(
       selectInput("site2", label=h4("COMPARISON SITE"), 
                   choices=c("None" = 0, unique(wq$Site) %>% sort()), selected = 6),
       
-      dateRangeInput("date",
-                     label =h4('DATE RANGE'),
-                     start ="2020-03-10" , end = "2020-04-10"),
       
       radioButtons("variable",
                    label = h4("OBSERVATIONS"),
@@ -90,15 +91,9 @@ ui <- fluidPage(
                     value = T),
       
       
-      h3("DISCRETE DATA"),
+      h3("LAKEWATCH AND YSI OBSERVATIONS"),
       p("(updated every 2 weeks for YSI, and every 4 months for LAKEWATCH)"),
       
-      
-      #selectInput("site3", label= h4("Site"), 
-      #            choices=unique(lab$Site)),
-      
-      #selectInput("site4", label=h4("Comparison"), 
-      #            choices=c("None" = 0,unique(lab$Site))),
       
       radioButtons("variable2",
                    label = h4("OBSERVATIONS"),         
@@ -115,21 +110,17 @@ ui <- fluidPage(
     # The display of the main panel
     mainPanel(
       width = 9,
-      h1("CONTINUOUS MONITORING DATA"),
+      h1("MAP OF SITES"),
+      uiOutput("map", height = "600px"), 
+      h1("DATA LOGGER MEASUREMENTS"),
       plotOutput("sensorplot", height = "600px"),
       h1("POINT SAMPLING DATA"),
       plotOutput("labplot", height = "600px")
       
-      
     )
   )
 )
-#Debug
-# input <- list()
-# input$date <- c("2017-01-01", "2018-07-01")
-# input$variable <- "Salinity"
-# input$site1 <- 1
-# input$site2 <- 6
+
 
 server <- shinyServer(function(input, output) {
   
@@ -192,7 +183,14 @@ server <- shinyServer(function(input, output) {
       theme_gray(base_size = 14) +
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
       facet_wrap(~Site, ncol = 1, labeller = label_both) +
-      theme(strip.text = element_text(size=30), axis.text = element_text(size=20), axis.title = element_text(size=20))
+      theme(strip.text = element_text(size=30), 
+            axis.text = element_text(size=20), 
+            axis.title = element_text(size=20),
+            panel.background = element_blank(),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            axis.line = element_line(colour = "black"),
+            panel.border = element_rect(colour = "black", fill=NA, size=1))
     
     
     # Add feature if we want to overlay the point sample data
@@ -248,13 +246,28 @@ server <- shinyServer(function(input, output) {
       theme_gray(base_size = 14) +
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
       facet_wrap(~ Site, ncol = 1, labeller = label_both) +
-      theme(strip.text = element_text(size=30), axis.text = element_text(size=20), axis.title = element_text(size=20))
+      theme(strip.text = element_text(size=30), 
+            axis.text = element_text(size=20), 
+            axis.title = element_text(size=20),
+            panel.background = element_blank(),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            axis.line = element_line(colour = "black"),
+            panel.border = element_rect(colour = "black", fill=NA, size=1))
     
     
     labplot
   })
   
   
+  output$map <- renderUI({
+    if(input$site1== "1" & input$site2 == "6" ){            
+      img(height = 450, width = 600, src = "1_6.jpg")
+    }                                        
+    else if(input$site1== "1" & input$site2 == "2"){
+      img(height = 450, width = 600, src = "1_2.jpg")
+    }
+  })
 })
 
 # Run the application 
