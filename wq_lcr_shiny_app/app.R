@@ -4,6 +4,7 @@ library("shinythemes")
 library("ggplot2")
 library("lubridate")
 library("naniar")
+library("zoo")
 
 #Make sure to be on the project directory before starting the Shiny App
 
@@ -50,12 +51,9 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       
-      #h3("MAP OF SUWANNEE SOUND") ,
-      #img(src="shiny_map.jpg", width="100%"),
+      width = 4,
       
-      width = 3,
-      
-      h3("DATA LOGGER"),
+      h4("MAP, DATA LOGGER & ROLLING AVERAGES TAB OPTIONS"),
       
       p("(hourly observations collected starting September 2017)"),
       
@@ -71,7 +69,7 @@ ui <- fluidPage(
       
       
       radioButtons("variable",
-                   label = h4("OBSERVATIONS"),
+                   label = h5("OBSERVATIONS"),
                    choices = list("Salinity (ppt)" = "Salinity",
                                   "Conductivity (mS/cm)"= "Conductivity",
                                   "Temperature (C)" = "Temperature"),
@@ -91,12 +89,12 @@ ui <- fluidPage(
                     value = T),
       
       
-      h3("LAKEWATCH AND YSI OBSERVATIONS"),
+      h4("POINT SAMPLING TAB OPTIONS"),
       p("(updated every 2 weeks for YSI, and every 4 months for LAKEWATCH)"),
       
       
       radioButtons("variable2",
-                   label = h4("OBSERVATIONS"),         
+                   label = h5("OBSERVATIONS"),         
                    choices = list("Salinity (ppt)" = "Salinity",
                                   "Conductivity (mS/cm)"= "Conductivity",
                                   "Temperature (C)" = "Temperature",
@@ -109,18 +107,19 @@ ui <- fluidPage(
     
     # The display of the main panel
     mainPanel(
-      width = 9,
-      h1("MAP OF SITES"),
-      uiOutput("map", height = "600px"), 
-      h1("DATA LOGGER MEASUREMENTS"),
-      plotOutput("sensorplot", height = "600px"),
-      h1("POINT SAMPLING DATA"),
-      plotOutput("labplot", height = "600px")
       
+      tabsetPanel(type = "tabs",
+                  tabPanel("MAP OF SELECTED SITES", uiOutput("map", height = "800px")),
+                  tabPanel("DATA LOGGER MEASUREMENTS", plotOutput("sensorplot", height = "600px")),
+                  tabPanel("POINT SAMPLING DATA", plotOutput("labplot", height = "600px")),
+                  tabPanel("ROLLING AVERAGES", plotOutput("rollingplot", height = "600px"))
+                  
+
+      
+      )
     )
   )
 )
-
 
 server <- shinyServer(function(input, output) {
   
@@ -262,11 +261,501 @@ server <- shinyServer(function(input, output) {
   
   output$map <- renderUI({
     if(input$site1== "1" & input$site2 == "6" ){            
-      img(height = 450, width = 600, src = "1_6.jpg")
-    }                                        
-    else if(input$site1== "1" & input$site2 == "2"){
-      img(height = 450, width = 600, src = "1_2.jpg")
+      img(height = 600, width = 800, src = "1_6.jpg")
+    } 
+    else if(input$site2== "1" & input$site1 == "6" ){            
+      img(height = 600, width = 800, src = "1_6.jpg")
+    }  
+    
+    else if(input$site2== "1" & input$site1 == "1" ){            
+      img(height = 600, width = 800, src = "1_N.jpg")
+    }  
+    else if(input$site1== "1" & input$site2 == "1"){
+      img(height = 600, width = 800, src = "1_N.jpg")
     }
+    else if(input$site1== "1" & input$site2 == "2"){
+      img(height = 600, width = 800, src = "1_2.jpg")
+    }
+    else if(input$site2== "1" & input$site1 == "2"){
+      img(height = 600, width = 800, src = "1_2.jpg")
+    }
+    else if(input$site1== "1" & input$site2 == "3"){
+      img(height = 600, width = 800, src = "1_3.jpg")
+    }
+    else if(input$site2== "1" & input$site1 == "3"){
+      img(height = 600, width = 800, src = "1_3.jpg")
+    }
+    
+    else if(input$site1== "1" & input$site2 == "4"){
+      img(height = 600, width = 800, src = "1_4.jpg")
+    }
+    else if(input$site2== "1" & input$site1 == "4"){
+      img(height = 600, width = 800, src = "1_4.jpg")
+    }
+    else if(input$site1== "1" & input$site2 == "5"){
+      img(height = 600, width = 800, src = "1_5.jpg")
+    }
+    else if(input$site2== "1" & input$site1 == "5"){
+      img(height = 600, width = 800, src = "1_5.jpg")
+    }
+    
+    else if(input$site1== "1" & input$site2 == "7"){
+      img(height = 600, width = 800, src = "1_7.jpg")
+    }
+    else if(input$site2== "1" & input$site1 == "7"){
+      img(height = 600, width = 800, src = "1_7.jpg")
+    }
+    
+    else if(input$site1== "1" & input$site2 == "8"){
+      img(height = 600, width = 800, src = "1_8.jpg")
+    }
+    else if(input$site2== "1" & input$site1 == "8"){
+      img(height = 600, width = 800, src = "1_8.jpg")
+    }
+    
+    else if(input$site1== "1" & input$site2 == "9"){
+      img(height = 600, width = 800, src = "1_9.jpg")
+    }
+    else if(input$site2== "1" & input$site1 == "9"){
+      img(height = 600, width = 800, src = "1_9.jpg")
+    }
+    else if(input$site1== "1" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "1_10.jpg")
+    }
+    else if(input$site2== "1" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "1_10.jpg")
+    }
+    else if(input$site1== "1" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "1_N.jpg")
+    }
+    else if(input$site2== "1" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "1_N.jpg")
+    }
+    else if(input$site1== "2" & input$site2 == "3"){
+      img(height = 600, width = 800, src = "2_3.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "3"){
+      img(height = 600, width = 800, src = "2_3.jpg")
+    }
+    else if(input$site1== "2" & input$site2 == "4"){
+      img(height = 600, width = 800, src = "2_4.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "4"){
+      img(height = 600, width = 800, src = "2_4.jpg")
+    }
+    
+    else if(input$site1== "2" & input$site2 == "5"){
+      img(height = 600, width = 800, src = "2_5.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "5"){
+      img(height = 600, width = 800, src = "2_5.jpg")
+    }
+    
+    else if(input$site1== "2" & input$site2 == "6"){
+      img(height = 600, width = 800, src = "2_6.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "6"){
+      img(height = 600, width = 800, src = "2_6.jpg")
+    }
+    
+    else if(input$site1== "2" & input$site2 == "7"){
+      img(height = 600, width = 800, src = "2_7.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "7"){
+      img(height = 600, width = 800, src = "2_7.jpg")
+    }
+    
+    else if(input$site1== "2" & input$site2 == "8"){
+      img(height = 600, width = 800, src = "2_8.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "8"){
+      img(height = 600, width = 800, src = "2_8.jpg")
+    }
+    
+    else if(input$site1== "2" & input$site2 == "9"){
+      img(height = 600, width = 800, src = "2_9.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "9"){
+      img(height = 600, width = 800, src = "2_9.jpg")
+    }
+    
+    else if(input$site1== "2" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "2_10.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "2_10.jpg")
+    }
+    
+    else if(input$site1== "2" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "2_N.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "2_N.jpg")
+    }
+    
+    else if(input$site1== "2" & input$site2 == "2"){
+      img(height = 600, width = 800, src = "2_N.jpg")
+    }
+    else if(input$site2== "2" & input$site1 == "2"){
+      img(height = 600, width = 800, src = "2_N.jpg")
+    }
+    
+    else if(input$site1== "3" & input$site2 == "4"){
+      img(height = 600, width = 800, src = "3_4.jpg")
+    }
+    else if(input$site2== "3" & input$site1 == "4"){
+      img(height = 600, width = 800, src = "3_4.jpg")
+    }
+    
+    else if(input$site1== "3" & input$site2 == "5"){
+      img(height = 600, width = 800, src = "3_5.jpg")
+    }
+    else if(input$site2== "3" & input$site1 == "5"){
+      img(height = 600, width = 800, src = "3_5.jpg")
+    }
+    else if(input$site1== "3" & input$site2 == "6"){
+      img(height = 600, width = 800, src = "3_6.jpg")
+    }
+    else if(input$site2== "3" & input$site1 == "6"){
+      img(height = 600, width = 800, src = "3_6.jpg")
+    }
+    
+    else if(input$site1== "3" & input$site2 == "7"){
+      img(height = 600, width = 800, src = "3_7.jpg")
+    }
+    else if(input$site2== "3" & input$site1 == "7"){
+      img(height = 600, width = 800, src = "3_7.jpg")
+    }
+    
+    else if(input$site1== "3" & input$site2 == "8"){
+      img(height = 600, width = 800, src = "3_8.jpg")
+    }
+    else if(input$site2== "3" & input$site1 == "8"){
+      img(height = 600, width = 800, src = "3_8.jpg")
+    }
+    
+    else if(input$site1== "3" & input$site2 == "9"){
+      img(height = 600, width = 800, src = "3_9.jpg")
+    }
+    else if(input$site2== "3" & input$site1 == "9"){
+      img(height = 600, width = 800, src = "3_9.jpg")
+    }
+    
+    else if(input$site1== "3" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "3_10.jpg")
+    }
+    else if(input$site2== "3" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "3_10.jpg")
+    }
+    
+    else if(input$site1== "3" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "3_N.jpg")
+    }
+    else if(input$site2== "3" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "3_N.jpg")
+    }
+    
+    else if(input$site1== "3" & input$site2 == "3"){
+      img(height = 600, width = 800, src = "3_N.jpg")
+    }
+    else if(input$site2== "3" & input$site1 == "3"){
+      img(height = 600, width = 800, src = "3_N.jpg")
+    }
+    
+    else if(input$site1== "4" & input$site2 == "5"){
+      img(height = 600, width = 800, src = "4_5.jpg")
+    }
+    else if(input$site2== "4" & input$site1 == "5"){
+      img(height = 600, width = 800, src = "4_5.jpg")
+    }
+    
+    else if(input$site1== "4" & input$site2 == "6"){
+      img(height = 600, width = 800, src = "4_6.jpg")
+    }
+    else if(input$site2== "4" & input$site1 == "6"){
+      img(height = 600, width = 800, src = "4_6.jpg")
+    }
+    
+    else if(input$site1== "4" & input$site2 == "7"){
+      img(height = 600, width = 800, src = "4_7.jpg")
+    }
+    else if(input$site2== "4" & input$site1 == "7"){
+      img(height = 600, width = 800, src = "4_7.jpg")
+    }
+    
+    else if(input$site1== "4" & input$site2 == "8"){
+      img(height = 600, width = 800, src = "4_8.jpg")
+    }
+    else if(input$site2== "4" & input$site1 == "8"){
+      img(height = 600, width = 800, src = "4_8.jpg")
+    }
+    
+    else if(input$site1== "4" & input$site2 == "9"){
+      img(height = 600, width = 800, src = "4_9.jpg")
+    }
+    else if(input$site2== "4" & input$site1 == "9"){
+      img(height = 600, width = 800, src = "4_9.jpg")
+    }
+    
+    else if(input$site1== "4" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "4_10.jpg")
+    }
+    else if(input$site2== "4" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "4_10.jpg")
+    }
+    
+    else if(input$site1== "4" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "4_N.jpg")
+    }
+    else if(input$site2== "4" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "4_N.jpg")
+    }
+    
+    else if(input$site1== "4" & input$site2 == "4"){
+      img(height = 600, width = 800, src = "4_N.jpg")
+    }
+    else if(input$site2== "4" & input$site1 == "4"){
+      img(height = 600, width = 800, src = "4_N.jpg")
+    }
+    
+    else if(input$site1== "5" & input$site2 == "6"){
+      img(height = 600, width = 800, src = "5_6.jpg")
+    }
+    else if(input$site2== "5" & input$site1 == "6"){
+      img(height = 600, width = 800, src = "5_6.jpg")
+    }
+    
+    else if(input$site1== "5" & input$site2 == "7"){
+      img(height = 600, width = 800, src = "5_7.jpg")
+    }
+    else if(input$site2== "5" & input$site1 == "7"){
+      img(height = 600, width = 800, src = "5_7.jpg")
+    }
+    
+    else if(input$site1== "5" & input$site2 == "8"){
+      img(height = 600, width = 800, src = "5_8.jpg")
+    }
+    else if(input$site2== "5" & input$site1 == "8"){
+      img(height = 600, width = 800, src = "5_8.jpg")
+    }
+    
+    else if(input$site1== "5" & input$site2 == "9"){
+      img(height = 600, width = 800, src = "5_9.jpg")
+    }
+    else if(input$site2== "5" & input$site1 == "9"){
+      img(height = 600, width = 800, src = "5_9.jpg")
+    }
+    
+    else if(input$site1== "5" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "5_10.jpg")
+    }
+    else if(input$site2== "5" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "5_10.jpg")
+    }
+    
+    else if(input$site1== "5" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "5_N.jpg")
+    }
+    else if(input$site2== "5" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "5_N.jpg")
+    }
+    
+    else if(input$site1== "5" & input$site2 == "5"){
+      img(height = 600, width = 800, src = "5_N.jpg")
+    }
+    else if(input$site2== "5" & input$site1 == "5"){
+      img(height = 600, width = 800, src = "5_N.jpg")
+    }
+    
+    else if(input$site1== "6" & input$site2 == "7"){
+      img(height = 600, width = 800, src = "6_7.jpg")
+    }
+    else if(input$site2== "6" & input$site1 == "7"){
+      img(height = 600, width = 800, src = "6_7.jpg")
+    }
+    else if(input$site1== "6" & input$site2 == "8"){
+      img(height = 600, width = 800, src = "6_8.jpg")
+    }
+    else if(input$site2== "6" & input$site1 == "8"){
+      img(height = 600, width = 800, src = "6_8.jpg")
+    }
+    
+    else if(input$site1== "6" & input$site2 == "9"){
+      img(height = 600, width = 800, src = "6_9.jpg")
+    }
+    else if(input$site2== "6" & input$site1 == "9"){
+      img(height = 600, width = 800, src = "6_9.jpg")
+    }
+    else if(input$site1== "6" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "6_10.jpg")
+    }
+    else if(input$site2== "6" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "6_10.jpg")
+    }
+    else if(input$site1== "6" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "6_N.jpg")
+    }
+    else if(input$site2== "6" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "6_N.jpg")
+    }
+    
+    else if(input$site1== "6" & input$site2 == "6"){
+      img(height = 600, width = 800, src = "6_N.jpg")
+    }
+    else if(input$site2== "6" & input$site1 == "6"){
+      img(height = 600, width = 800, src = "6_N.jpg")
+    }
+    
+    else if(input$site1== "7" & input$site2 == "8"){
+      img(height = 600, width = 800, src = "7_8.jpg")
+    }
+    else if(input$site2== "7" & input$site1 == "8"){
+      img(height = 600, width = 800, src = "7_8.jpg")
+    }
+    
+    else if(input$site1== "7" & input$site2 == "9"){
+      img(height = 600, width = 800, src = "7_9.jpg")
+    }
+    else if(input$site2== "7" & input$site1 == "9"){
+      img(height = 600, width = 800, src = "7_9.jpg")
+    }
+    
+    else if(input$site1== "7" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "7_10.jpg")
+    }
+    else if(input$site2== "7" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "7_10.jpg")
+    }
+    
+    else if(input$site1== "7" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "7_N.jpg")
+    }
+    else if(input$site2== "7" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "7_N.jpg")
+    }
+    
+    else if(input$site1== "7" & input$site2 == "7"){
+      img(height = 600, width = 800, src = "7_N.jpg")
+    }
+    else if(input$site2== "7" & input$site1 == "7"){
+      img(height = 600, width = 800, src = "7_N.jpg")
+    }
+    
+    else if(input$site1== "8" & input$site2 == "9"){
+      img(height = 600, width = 800, src = "8_9.jpg")
+    }
+    else if(input$site2== "8" & input$site1 == "9"){
+      img(height = 600, width = 800, src = "8_9.jpg")
+    }
+    
+    else if(input$site1== "8" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "8_10.jpg")
+    }
+    else if(input$site2== "8" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "8_10.jpg")
+    }
+    
+    else if(input$site1== "8" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "8_N.jpg")
+    }
+    else if(input$site2== "8" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "8_N.jpg")
+    }
+    
+    else if(input$site1== "8" & input$site2 == "8"){
+      img(height = 600, width = 800, src = "8_N.jpg")
+    }
+    else if(input$site2== "8" & input$site1 == "8"){
+      img(height = 600, width = 800, src = "8_N.jpg")
+    }
+    
+    else if(input$site1== "9" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "9_10.jpg")
+    }
+    else if(input$site2== "9" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "9_10.jpg")
+    }
+    
+    else if(input$site1== "9" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "9_N.jpg")
+    }
+    else if(input$site2== "9" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "9_N.jpg")
+    }
+    
+    else if(input$site1== "9" & input$site2 == "9"){
+      img(height = 600, width = 800, src = "9_N.jpg")
+    }
+    else if(input$site2== "9" & input$site1 == "9"){
+      img(height = 600, width = 800, src = "9_N.jpg")
+    }
+    
+    else if(input$site1== "10" & input$site2 == "0"){
+      img(height = 600, width = 800, src = "10_N.jpg")
+    }
+    else if(input$site2== "10" & input$site1 == "0"){
+      img(height = 600, width = 800, src = "10_N.jpg")
+    }
+    
+    else if(input$site1== "10" & input$site2 == "10"){
+      img(height = 600, width = 800, src = "10_N.jpg")
+    }
+    else if(input$site2== "10" & input$site1 == "10"){
+      img(height = 600, width = 800, src = "10_N.jpg")
+    }
+    
+  })
+  
+  output$rollingplot <- renderPlot({
+    
+    site1 <- as.numeric(input$site1)
+    site2 <- as.numeric(input$site2)
+    startDate <- paste(input$date[1], "00:00:00") %>% ymd_hms(tz="UTC")
+    endDate <- paste(input$date[2], "23:00:00") %>% ymd_hms(tz="UTC")
+    
+    ### sensorplot
+    # Filter WQ table
+    wq1 <- wq %>% 
+      filter(Site == site1 | Site == site2,
+             Date >= startDate & Date <= endDate) %>% 
+      select(Site, Date, Measure = input$variable)
+    
+    
+    wq2<-wq1 %>%
+      dplyr::group_by(ymd(Date), Site) %>% 
+      dplyr::mutate(
+        days_7 = zoo::rollmean(Measure, k = 7, fill = NA),
+        days_15 = zoo::rollmean(Measure, k = 15, fill = NA),
+        days_21 = zoo::rollmean(Measure, k = 21, fill = NA)) %>% 
+      dplyr::ungroup()
+    
+    
+    wq3 <- wq2 %>% 
+      tidyr::pivot_longer(names_to = "rolling_avg", 
+                          values_to = "rolling_value", 
+                          cols = c(days_7, days_15, days_21)) 
+    
+    wq3$rolling_avg <- factor(wq3$rolling_avg, c("days_7", "days_15", "days_21"))
+    
+    rollingplot<- wq3 %>% 
+      drop_na("rolling_value") %>%
+      ggplot(aes(x = Date, y = Measure)) +
+      geom_line(aes(y = rolling_value, color = rolling_avg, group= rolling_avg), size = 1.1) +
+      ylab(input$variable) + 
+      xlab("Date")+
+      facet_wrap(~Site + rolling_avg, labeller = label_both) +
+      theme(legend.position = "none", 
+        strip.text = element_text(size=15), 
+            axis.text = element_text(size=15), 
+            axis.title = element_text(size=15),
+            panel.background = element_blank(),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            axis.line = element_line(colour = "black"),
+            panel.border = element_rect(colour = "black", fill=NA, size=1))
+    
+    rollingplot
+    
   })
 })
 
