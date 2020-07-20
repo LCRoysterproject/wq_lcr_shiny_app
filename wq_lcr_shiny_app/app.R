@@ -45,7 +45,7 @@ factor_site_seq <- function (vec, site1, site2) {
 
 ui <- fluidPage(
   #Selecting a theme from pre-made shiny themes
-  theme = shinytheme("united"),
+  theme = shinytheme("yeti"),
   
   #Creating the design and designations of the side bar, width=4 is too large and will not display the graphs correctly
   sidebarLayout(
@@ -53,52 +53,52 @@ ui <- fluidPage(
       
       width = 4,
       
-      h4("MAP, DATA LOGGER & ROLLING AVERAGES TAB OPTIONS"),
+      #h4("MAP, DATA LOGGER & ROLLING AVERAGES TAB OPTIONS"),
       
-      dateRangeInput("date",
-                     label =h5('DATE RANGE'),
-                     start ="2020-03-10" , end = "2020-04-10"),
-      
-      selectInput("site1", label= h5("SITE"), 
+      selectInput("site1", label= h5("SITE (input needed for all tabs)"), 
                   choices=c(unique(wq$Site) %>% sort()), selected = 1),
       
-      selectInput("site2", label=h5("COMPARISON SITE"), 
+      selectInput("site2", label=h5("COMPARISON SITE (input needed for all tabs)"), 
                   choices=c("None" = 0, unique(wq$Site) %>% sort()), selected = 6),
       
       
+      dateRangeInput("date",
+                     label =h5('DATE RANGE (input needed for all tabs, except Map)'),
+                     start ="2020-03-10" , end = "2020-04-10"),
+  
       radioButtons("variable",
-                   label = h5("OBSERVATIONS"),
+                   label = h5("OBSERVATIONS (input needed for Data Logger Measurements and Rolling Averages tabs)"),
                    choices = list("Salinity (ppt)" = "Salinity",
                                   "Conductivity (mS/cm)"= "Conductivity",
                                   "Temperature (C)" = "Temperature"),
                    selected = "Salinity"),
       
+      h6("Overlay only available in `Hourly` Temporal Resolution (Data Logger Measurements tab)"),
+      
+      checkboxInput("overlay", 
+                    label = "Overlay point sample data (Salinity, Conductivity, or Temperature)?",
+                    value = T),
+      
       radioButtons("temp_res",
-                   label = "TEMPORAL RESOLUTION",
+                   label = h5("TEMPORAL RESOLUTION (input needed for only Data Logger Measurements tab)"),
                    choices = list("Hourly" = "Hourly",
                                   "Daily Mean" = "Daily"),
                    selected = "Hourly"),
       
       
-      p("Only avialable in `Hourly` Temporal Resolution in the tab Data Logger Measurements.'"),
       
-      checkboxInput("overlay", 
-                    label = "Overlay point sample data?",
-                    value = T),
-      
-      
-      h4("POINT SAMPLING TAB OPTIONS"),
+      #h4("POINT SAMPLING TAB OPTIONS"),
 
       radioButtons("variable2",
-                   label = h5("OBSERVATIONS"),         
-                   choices = list("Salinity (ppt)" = "Salinity",
-                                  "Conductivity (mS/cm)"= "Conductivity",
-                                  "Temperature (C)" = "Temperature",
+                   label = h5("POINT SAMPLING DATA OPTIONS (input needed only for Point Sampling Data tab)"),         
+                   choices = list(#"Salinity (ppt)" = "Salinity",
+                                  #"Conductivity (mS/cm)"= "Conductivity",
+                                  #"Temperature (C)" = "Temperature",
                                   "Phosphorus (ug/L)" = "Phosphorus",
                                   "Nitrogen (ug/L)" = "Nitrogen",
                                   "Color (Pt-Co Units)" = "Color",
                                   "Secchi (m)" = "Secchi"),
-                   selected = c("Salinity"))),
+                   selected = c("Phosphorus"))),
     
     
     # The display of the main panel
@@ -108,24 +108,32 @@ ui <- fluidPage(
                   tabPanel(title= "MAP OF SELECTED SITES", 
                            br(), 
                            h3("Map functionality"),
-                           p("Use the drop-down boxes Site and Site Comparison to dynamically change this map. The selected sites will be circled on the map."),
+                           p("Use the drop-down boxes Site and Comparison Site to dynamically change this map. The selected sites will be circled on the map."),
                            uiOutput("map", height = "800px")),
                   tabPanel(title="DATA LOGGER MEASUREMENTS",
                            br(), 
                            h3("Data selection"),
-                           p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Site Comparison. Select additional information such as the type of Observations and/or Temporal Resolution. An overaly of YSI/ Lakewatch measurements can also be added to this figure, in the Temporal Resolution of Hourly.  "),
+                           p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Comparison Site options. Select additional information such as the type of Observations and/or Temporal Resolution. An overlay of YSI/ Lakewatch measurements can also be added to this figure, in the Hourly Temporal Resolution. Missing observations are due to missing or temporarly removed sensors."),
                            plotOutput("sensorplot", height = "600px")),
 
                   tabPanel(title="ROLLING AVERAGES", 
                            br(), 
                            h3("Rolling averages definition"),
-                           p("Rolling or moving averages are a way to reduce noise and smooth time series data. Rolling averages were calculated using the function `rollmean()` in the R package `zoo`. Select the desired Date Range, Site and Site Comparison. Select additional information such as the type of Observations  for the figure to display."),
+                           p("Rolling or moving averages are a way to reduce noise and smooth time series data. Rolling averages were calculated using the function `rollmean()` in the R package `zoo`. Select the desired Date Range, Site and Site Comparison. Select additional information such as the type of Observations (Salinity, Conductivity, or Temperature) for the figure to display."),
                            plotOutput("rollingplot", height = "600px")),
                   tabPanel(title="POINT SAMPLING DATA", 
                            br(), 
                            h3("Data selection"),
-                           p("Updated every 2 weeks for YSI, and every 4 months for Lakewatch measurements. Select the desired Date Range, Site and Site Comparison. Select the desired Observation type under POINT SAMPLING TAB OPTIONS."),
-                           plotOutput("labplot", height = "600px"))
+                           p("Updated every 2 weeks for YSI, and every 4 months for Lakewatch measurements. Select the desired Date Range, Site and Site Comparison. Select the desired Observation type under POINT SAMPLING DATA OPTIONS. Missing observations are due to missing or temporarly removed sensors."),
+                           plotOutput("labplot", height = "600px")),
+                  tabPanel(title="DOWNLOAD THESE DATA", 
+                            h3("Download Options"),
+                            p("Variables selected in this Shiny App are available for download here."), 
+                            br(), 
+                            downloadButton('downloadData', "Download Water Quality Data"),
+                            br(), 
+                            h3("Table"),
+                           tableOutput("table"))
                   
       
       )
@@ -767,7 +775,40 @@ server <- shinyServer(function(input, output) {
     rollingplot
     
   })
+  
+  datasetInput <- reactive({
+    site1 <- as.numeric(input$site1)
+    site2 <- as.numeric(input$site2)
+    startDate <- paste(input$date[1], "00:00:00") %>% ymd_hms(tz="UTC")
+    endDate <- paste(input$date[2], "23:00:00") %>% ymd_hms(tz="UTC")
+    
+    ### sensorplot
+    # Filter WQ table
+    wq3 <- wq %>% 
+      filter(Site == site1 | Site == site2,
+             Date >= startDate & Date <= endDate) %>% 
+      mutate(Date = as.character(Date)) %>% 
+      select(Date, Site, input$variable)
+    
+    print(wq3)
+    
+  })
+  
+  # Table of selected dataset ----
+  output$table <- renderTable({
+    datasetInput()
+  })
+  
+  # Downloadable csv of selected dataset ----
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste(input$dataset, ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(datasetInput(), file, row.names = FALSE)
+    })
 })
+
 
 # Run the application 
 shinyApp(ui = ui, server = server)

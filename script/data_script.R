@@ -92,7 +92,7 @@ wq<-wq %>%
 
 #Removing all the observations from after 2020/04/09
 wq<-wq %>% 
-  filter(!(Date > "2020-04-10 23:00:00"))
+  filter(!(Date > "2020-04-09 23:00:00"))
 
 #Removing all trial 
 wq<-wq %>% 
