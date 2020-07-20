@@ -55,16 +55,14 @@ ui <- fluidPage(
       
       h4("MAP, DATA LOGGER & ROLLING AVERAGES TAB OPTIONS"),
       
-      p("(hourly observations collected starting September 2017)"),
-      
       dateRangeInput("date",
-                     label =h4('DATE RANGE'),
+                     label =h5('DATE RANGE'),
                      start ="2020-03-10" , end = "2020-04-10"),
       
-      selectInput("site1", label= h4("SITE"), 
+      selectInput("site1", label= h5("SITE"), 
                   choices=c(unique(wq$Site) %>% sort()), selected = 1),
       
-      selectInput("site2", label=h4("COMPARISON SITE"), 
+      selectInput("site2", label=h5("COMPARISON SITE"), 
                   choices=c("None" = 0, unique(wq$Site) %>% sort()), selected = 6),
       
       
@@ -82,7 +80,7 @@ ui <- fluidPage(
                    selected = "Hourly"),
       
       
-      p("Please only select if you are viewing 'Hourly' in TEMPORAL RESOLUTION, not representational in 'Daily Mean'"),
+      p("Only avialable in `Hourly` Temporal Resolution in the tab Data Logger Measurements.'"),
       
       checkboxInput("overlay", 
                     label = "Overlay point sample data?",
@@ -90,9 +88,7 @@ ui <- fluidPage(
       
       
       h4("POINT SAMPLING TAB OPTIONS"),
-      p("(updated every 2 weeks for YSI, and every 4 months for LAKEWATCH)"),
-      
-      
+
       radioButtons("variable2",
                    label = h5("OBSERVATIONS"),         
                    choices = list("Salinity (ppt)" = "Salinity",
@@ -109,12 +105,28 @@ ui <- fluidPage(
     mainPanel(
       
       tabsetPanel(type = "tabs",
-                  tabPanel("MAP OF SELECTED SITES", uiOutput("map", height = "800px")),
-                  tabPanel("DATA LOGGER MEASUREMENTS", plotOutput("sensorplot", height = "600px")),
-                  tabPanel("POINT SAMPLING DATA", plotOutput("labplot", height = "600px")),
-                  tabPanel("ROLLING AVERAGES", plotOutput("rollingplot", height = "600px"))
-                  
+                  tabPanel(title= "MAP OF SELECTED SITES", 
+                           br(), 
+                           h3("Map functionality"),
+                           p("Use the drop-down boxes Site and Site Comparison to dynamically change this map. The selected sites will be circled on the map."),
+                           uiOutput("map", height = "800px")),
+                  tabPanel(title="DATA LOGGER MEASUREMENTS",
+                           br(), 
+                           h3("Data selection"),
+                           p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Site Comparison. Select additional information such as the type of Observations and/or Temporal Resolution. An overaly of YSI/ Lakewatch measurements can also be added to this figure, in the Temporal Resolution of Hourly.  "),
+                           plotOutput("sensorplot", height = "600px")),
 
+                  tabPanel(title="ROLLING AVERAGES", 
+                           br(), 
+                           h3("Rolling averages definition"),
+                           p("Rolling or moving averages are a way to reduce noise and smooth time series data. Rolling averages were calculated using the function `rollmean()` in the R package `zoo`. Select the desired Date Range, Site and Site Comparison. Select additional information such as the type of Observations  for the figure to display."),
+                           plotOutput("rollingplot", height = "600px")),
+                  tabPanel(title="POINT SAMPLING DATA", 
+                           br(), 
+                           h3("Data selection"),
+                           p("Updated every 2 weeks for YSI, and every 4 months for Lakewatch measurements. Select the desired Date Range, Site and Site Comparison. Select the desired Observation type under POINT SAMPLING TAB OPTIONS."),
+                           plotOutput("labplot", height = "600px"))
+                  
       
       )
     )
@@ -208,9 +220,7 @@ server <- shinyServer(function(input, output) {
           scale_color_manual(name = "Method", values = c("red", "blue")) 
         
       } else if (input$temp_res == "Daily") {
-        sensorplot <- sensorplot + 
-          geom_point(data = lab1, aes(x = date(Date), y = Measure, colour = Sensor_Type), shape = 17, size = 5) +
-          scale_color_manual(name = "Method", values = c("red", "blue"))
+        sensorplot 
       }
       
     }
