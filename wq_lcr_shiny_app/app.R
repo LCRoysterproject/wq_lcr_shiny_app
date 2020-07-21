@@ -72,7 +72,7 @@ ui <- fluidPage(
       
       dateRangeInput("date",
                      label =h5('DATE RANGE (input needed for all tabs, except Map)'),
-                     start ="2020-02-01" , end = "2020-04-10"),
+                     start ="2020-02-01" , end = Sys.Date()),
   
       radioButtons("variable",
                    label = h5("OBSERVATIONS (input needed for Data Logger Measurements and Rolling Averages tabs)"),
