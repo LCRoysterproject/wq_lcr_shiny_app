@@ -5,6 +5,9 @@ library("ggplot2")
 library("lubridate")
 library("naniar")
 library("zoo")
+library("ncdf4")
+library("rnoaa")
+library("plotly")
 
 #Make sure to be on the project directory before starting the Shiny App
 
@@ -40,6 +43,11 @@ factor_site_seq <- function (vec, site1, site2) {
 }
 
 
+###Wind data
+
+wind <- read_rds("data/wind.rds")
+
+
 
 #### Front of the app, the user interface
 
@@ -64,13 +72,13 @@ ui <- fluidPage(
       
       dateRangeInput("date",
                      label =h5('DATE RANGE (input needed for all tabs, except Map)'),
-                     start ="2020-03-10" , end = "2020-04-10"),
+                     start ="2020-02-01" , end = "2020-04-10"),
   
       radioButtons("variable",
                    label = h5("OBSERVATIONS (input needed for Data Logger Measurements and Rolling Averages tabs)"),
-                   choices = list("Salinity (ppt)" = "Salinity",
-                                  "Conductivity (mS/cm)"= "Conductivity",
-                                  "Temperature (C)" = "Temperature"),
+                   choices = list("Salinity (ppt, YSI only)" = "Salinity",
+                                  "Conductivity (mS/cm, Lakewatch and YSI)"= "Conductivity",
+                                  "Temperature (C, YSI only)" = "Temperature"),
                    selected = "Salinity"),
       
       h6("Overlay only available in `Hourly` Temporal Resolution (Data Logger Measurements tab)"),
@@ -90,7 +98,7 @@ ui <- fluidPage(
       #h4("POINT SAMPLING TAB OPTIONS"),
 
       radioButtons("variable2",
-                   label = h5("POINT SAMPLING DATA OPTIONS (input needed only for Point Sampling Data tab)"),         
+                   label = h5("LAKEWATCH TAB OPTIONS (input needed only for Lakewatch tab)"),         
                    choices = list(#"Salinity (ppt)" = "Salinity",
                                   #"Conductivity (mS/cm)"= "Conductivity",
                                   #"Temperature (C)" = "Temperature",
@@ -113,7 +121,7 @@ ui <- fluidPage(
                   tabPanel(title="DATA LOGGER MEASUREMENTS",
                            br(), 
                            h3("Data selection"),
-                           p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Comparison Site options. Select additional information such as the type of Observations and/or Temporal Resolution. An overlay of YSI/ Lakewatch measurements can also be added to this figure, in the Hourly Temporal Resolution. Missing observations are due to missing or temporarly removed sensors."),
+                           p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Comparison Site options. Select additional information such as the type of Observations and/or Temporal Resolution. An overlay of YSI/ Lakewatch measurements can also be added to this figure, in the Hourly Temporal Resolution. Missing observations are due to missing or temporarily removed sensors."),
                            plotOutput("sensorplot", height = "600px")),
 
                   tabPanel(title="ROLLING AVERAGES", 
@@ -121,18 +129,23 @@ ui <- fluidPage(
                            h3("Rolling averages definition"),
                            p("Rolling or moving averages are a way to reduce noise and smooth time series data. Rolling averages were calculated using the function `rollmean()` in the R package `zoo`. Select the desired Date Range, Site and Site Comparison. Select additional information such as the type of Observations (Salinity, Conductivity, or Temperature) for the figure to display."),
                            plotOutput("rollingplot", height = "600px")),
-                  tabPanel(title="POINT SAMPLING DATA", 
+                  tabPanel(title="LAKEWATCH", 
                            br(), 
                            h3("Data selection"),
-                           p("Updated every 2 weeks for YSI, and every 4 months for Lakewatch measurements. Select the desired Date Range, Site and Site Comparison. Select the desired Observation type under POINT SAMPLING DATA OPTIONS. Missing observations are due to missing or temporarly removed sensors."),
+                           p("Updated measurements are avialable every 4 months through Lakewatch (https://lakewatch.ifas.ufl.edu/). Select the desired Date Range, Site and Comparison Site. Select the desired Observation type under LAKEWATCH TAB OPTIONS. Missing observations are due to processing lab time. If no values display in this figure, please select a broader date range."),
                            plotOutput("labplot", height = "600px")),
-                  tabPanel(title="DOWNLOAD THESE DATA", 
-                            h3("Download Options"),
-                            p("Variables selected in this Shiny App are available for download here."), 
-                            br(), 
-                            downloadButton('downloadData', "Download Water Quality Data"),
-                            br(), 
-                            h3("Table"),
+                  tabPanel(title="WIND DATA", 
+                           br(), 
+                           h3("WIND"),
+                           p("Hover over the figure to view additional information. Wind speed data are provided by the R package `rnoaa`. Wind data are updated periodically through USGS. If wind data are not displaying in this figure, please select a broader date range."),
+                           plotlyOutput("wind", height = "600px")),
+                  tabPanel(title="DOWNLOAD MEASUREMENTS", 
+                           h3("Download Options"),
+                           p("Variables selected in the Data Logger Measurements are available for download here."), 
+                           br(), 
+                           downloadButton('downloadData', "Download Water Quality Data"),
+                           br(), 
+                           h3("Table"),
                            tableOutput("table"))
                   
       
@@ -245,6 +258,7 @@ server <- shinyServer(function(input, output) {
     lab1 <- lab %>% 
       filter(Site == site1 | Site == site2,
              Date >= startDate & Date <= endDate) %>% 
+      filter(Sensor_Type == "LAKEWATCH") %>% 
       select(Site, Date, Measure = input$variable2, Sensor_Type)
     
     
@@ -252,10 +266,10 @@ server <- shinyServer(function(input, output) {
     lab1$Site <- factor_site_seq(lab1$Site, site1, site2)
     
     # Use similar trick as we did in sensorplot (e.g. build a df)
-    labplot <- ggplot(lab1, aes(x = Date, y = Measure, colour = Sensor_Type)) +
+    labplot <- ggplot(lab1, aes(x = Date, y = Measure)) +
       ylab(input$variable2) +
       geom_point(shape = 17, size = 5) +
-      scale_color_manual(name = "Method", values = c("red", "blue")) +
+      #scale_color_manual(name = "Method", values = c("red", "blue")) +
       scale_x_datetime(
         #   breaks = date_breaks("month") ,
         #   labels = date_format("%m/%Y")
@@ -742,18 +756,18 @@ server <- shinyServer(function(input, output) {
     wq2<-wq1 %>%
       dplyr::group_by(ymd(Date), Site) %>% 
       dplyr::mutate(
-        days_7 = zoo::rollmean(Measure, k = 7, fill = NA),
-        days_15 = zoo::rollmean(Measure, k = 15, fill = NA),
-        days_21 = zoo::rollmean(Measure, k = 21, fill = NA)) %>% 
+        seven_days = zoo::rollmean(Measure, k = 7, fill = NA),
+        fifteen_days = zoo::rollmean(Measure, k = 15, fill = NA),
+        twenty_one_days = zoo::rollmean(Measure, k = 21, fill = NA)) %>% 
       dplyr::ungroup()
     
     
     wq3 <- wq2 %>% 
       tidyr::pivot_longer(names_to = "rolling_avg", 
                           values_to = "rolling_value", 
-                          cols = c(days_7, days_15, days_21)) 
+                          cols = c(seven_days, fifteen_days, twenty_one_days)) 
     
-    wq3$rolling_avg <- factor(wq3$rolling_avg, c("days_7", "days_15", "days_21"))
+    wq3$rolling_avg <- factor(wq3$rolling_avg, c("seven_days", "fifteen_days", "twenty_one_days"))
     
     rollingplot<- wq3 %>% 
       drop_na("rolling_value") %>%
@@ -807,6 +821,38 @@ server <- shinyServer(function(input, output) {
     content = function(file) {
       write.csv(datasetInput(), file, row.names = FALSE)
     })
+  
+  output$wind<- renderPlotly({
+    
+    startDate <- paste(input$date[1], "00:00:00") %>% ymd_hms(tz="UTC")
+    endDate <- paste(input$date[2], "23:00:00") %>% ymd_hms(tz="UTC")
+    
+    # Shrink the wind table, and convert the format of time
+    wind$time <- ymd_hms(wind$time)
+    
+    wind <- wind %>%
+      filter(time >= startDate & time <= endDate) %>%
+      select(time, WindSpeed = wind_spd)
+    
+    
+    wind_plot<- ggplot(data= wind, aes( x= time, y= WindSpeed)) +
+      geom_line() +
+      labs( x= "Date", y= "Wind Speed (m/s)") +
+      theme(legend.position = "none", 
+            strip.text = element_text(size=15), 
+            axis.text = element_text(size=15), 
+            axis.title = element_text(size=15),
+            panel.background = element_blank(),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            axis.line = element_line(colour = "black"),
+            panel.border = element_rect(colour = "black", fill=NA, size=1))
+
+    
+    wind_plot<- ggplotly(wind_plot)
+    
+ })
+
 })
 
 

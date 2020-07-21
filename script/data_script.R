@@ -4,6 +4,8 @@ library("RMySQL")
 library("rsconnect")
 library("lubridate")
 library("RMariaDB")
+library("ncdf4")
+library("rnoaa")
 
 #Using the developer DBI, but RMariaDB is not available for the newest R version in developer mode
 #devtools::install_github("r-dbi/DBI")
@@ -139,5 +141,16 @@ lab<-lab %>%
 
 #Writting as a .csv for the Shiny App
 write.csv(lab, file = "wq_lcr_shiny_app/data/lab.csv")
+
+
+###Wind data
+
+wind17 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2017)
+wind18 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2018)
+wind19 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2019)
+wind20 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2020)
+wind <- rbind(wind17$data, wind18$data, wind19$data, wind20$data) %>% dplyr::distinct()
+
+write_rds(wind, "wq_lcr_shiny_app/data/wind.rds")
 
 
