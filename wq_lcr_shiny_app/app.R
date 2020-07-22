@@ -8,6 +8,7 @@ library("zoo")
 library("ncdf4")
 library("rnoaa")
 library("plotly")
+library("RColorBrewer")
 
 #Make sure to be on the project directory before starting the Shiny App
 
@@ -61,8 +62,6 @@ ui <- fluidPage(
       
       width = 4,
       
-      #h4("MAP, DATA LOGGER & ROLLING AVERAGES TAB OPTIONS"),
-      
       selectInput("site1", label= h5("SITE (input needed for all tabs)"), 
                   choices=c(unique(wq$Site) %>% sort()), selected = 1),
       
@@ -71,8 +70,8 @@ ui <- fluidPage(
       
       
       dateRangeInput("date",
-                     label =h5('DATE RANGE (input needed for all tabs, except Map)'),
-                     start ="2020-02-01" , end = Sys.Date()),
+                     label =h5('DATE RANGE (input needed for Data Logger, Rolling Averages and Windrose Tabs)'),
+                     start = Sys.Date() -30 , end = Sys.Date()),
   
       radioButtons("variable",
                    label = h5("OBSERVATIONS (input needed for Data Logger Measurements and Rolling Averages tabs)"),
@@ -95,10 +94,14 @@ ui <- fluidPage(
       
       
       
-      #h4("POINT SAMPLING TAB OPTIONS"),
-
+      h4("LAKEWATCH TAB OPTIONS"),
+      
+      dateRangeInput("date2",
+                     label =h5('DATE RANGE (input needed Lakewatch)'),
+                     start ="2019-02-01" , end = "2020-02-01"),
+      
       radioButtons("variable2",
-                   label = h5("LAKEWATCH TAB OPTIONS (input needed only for Lakewatch tab)"),         
+                   label = h5("LAKEWATCH OBSERVATIONS"),         
                    choices = list(#"Salinity (ppt)" = "Salinity",
                                   #"Conductivity (mS/cm)"= "Conductivity",
                                   #"Temperature (C)" = "Temperature",
@@ -132,13 +135,13 @@ ui <- fluidPage(
                   tabPanel(title="LAKEWATCH", 
                            br(), 
                            h3("Data selection"),
-                           p("Updated measurements are avialable every 4 months through Lakewatch (https://lakewatch.ifas.ufl.edu/). Select the desired Date Range, Site and Comparison Site. Select the desired Observation type under LAKEWATCH TAB OPTIONS. Missing observations are due to processing lab time. If no values display in this figure, please select a broader date range."),
+                           p("Updated measurements are avialable every 4 months through Lakewatch (https://lakewatch.ifas.ufl.edu/). Lakewatch measurements are only available for Sites 1-6. Select the desired Date Range, Site and Comparison Site. Select the desired Observation type under LAKEWATCH TAB OPTIONS. Missing observations are due to processing lab time. If no values display in this figure, please select a broader date range."),
                            plotOutput("labplot", height = "600px")),
-                  tabPanel(title="WIND DATA", 
+                  tabPanel(title="WINDROSE", 
                            br(), 
-                           h3("WIND"),
-                           p("Hover over the figure to view additional information. Wind speed data are provided by the R package `rnoaa`. Wind data are updated periodically through USGS. If wind data are not displaying in this figure, please select a broader date range."),
-                           plotlyOutput("wind", height = "600px")),
+                           h3("Wind data"),
+                           p("The windrose displays the magnitude and wind direction of a desired Date Range.Wind speed data are provided by the R package `rnoaa`. Wind data are updated periodically through USGS. If wind data are not displaying in this figure, please select a broader date range."),
+                           plotOutput("wind", height = "600px")),
                   tabPanel(title="DOWNLOAD MEASUREMENTS", 
                            h3("Download Options"),
                            p("Variables selected in the Data Logger Measurements are available for download here."), 
@@ -252,8 +255,8 @@ server <- shinyServer(function(input, output) {
   output$labplot<-renderPlot({
     site1 <- as.numeric(input$site1)
     site2 <- as.numeric(input$site2)
-    startDate <- paste(input$date[1], "00:00:00") %>% ymd_hms(tz="UTC")
-    endDate <- paste(input$date[2], "23:00:00") %>% ymd_hms(tz="UTC")
+    startDate <- paste(input$date2[1], "00:00:00") %>% ymd_hms(tz="UTC")
+    endDate <- paste(input$date2[2], "23:00:00") %>% ymd_hms(tz="UTC")
     
     lab1 <- lab %>% 
       filter(Site == site1 | Site == site2,
@@ -822,7 +825,7 @@ server <- shinyServer(function(input, output) {
       write.csv(datasetInput(), file, row.names = FALSE)
     })
   
-  output$wind<- renderPlotly({
+  output$wind<- renderPlot({
     
     startDate <- paste(input$date[1], "00:00:00") %>% ymd_hms(tz="UTC")
     endDate <- paste(input$date[2], "23:00:00") %>% ymd_hms(tz="UTC")
@@ -832,25 +835,145 @@ server <- shinyServer(function(input, output) {
     
     wind <- wind %>%
       filter(time >= startDate & time <= endDate) %>%
-      select(time, WindSpeed = wind_spd)
+      select(time, wind_spd, wind_dir)
     
     
-    wind_plot<- ggplot(data= wind, aes( x= time, y= WindSpeed)) +
-      geom_line() +
-      labs( x= "Date", y= "Wind Speed (m/s)") +
-      theme(legend.position = "none", 
-            strip.text = element_text(size=15), 
-            axis.text = element_text(size=15), 
-            axis.title = element_text(size=15),
-            panel.background = element_blank(),
-            panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank(),
-            axis.line = element_line(colour = "black"),
-            panel.border = element_rect(colour = "black", fill=NA, size=1))
-
+    plot.windrose <- function(data,
+                              spd,
+                              dir,
+                              spdres = 2,
+                              dirres = 30,
+                              spdmin = 2,
+                              spdmax = 20,
+                              spdseq = NULL,
+                              palette = "YlGnBu",
+                              countmax = NA,
+                              debug = 0){
+      
+      
+      # Look to see what data was passed in to the function
+      if (is.numeric(spd) & is.numeric(dir)){
+        # assume that we've been given vectors of the speed and direction vectors
+        data <- data.frame(spd = spd,
+                           dir = dir)
+        spd = "spd"
+        dir = "dir"
+      } else if (exists("data")){
+        # Assume that we've been given a data frame, and the name of the speed 
+        # and direction columns. This is the format we want for later use.    
+      }  
+      
+      # Tidy up input data ----
+      n.in <- NROW(data)
+      dnu <- (is.na(data[[spd]]) | is.na(data[[dir]]))
+      data[[spd]][dnu] <- NA
+      data[[dir]][dnu] <- NA
+      
+      # figure out the wind speed bins ----
+      if (missing(spdseq)){
+        spdseq <- seq(spdmin,spdmax,spdres)
+      } else {
+        if (debug >0){
+          cat("Using custom speed bins \n")
+        }
+      }
+      # get some information about the number of bins, etc.
+      n.spd.seq <- length(spdseq)
+      n.colors.in.range <- n.spd.seq - 1
+      
+      # create the color map
+      spd.colors <- colorRampPalette(brewer.pal(min(max(3,
+                                                        n.colors.in.range),
+                                                    min(9,
+                                                        n.colors.in.range)),                                               
+                                                palette))(n.colors.in.range)
+      
+      if (max(data[[spd]],na.rm = TRUE) > spdmax){    
+        spd.breaks <- c(spdseq,
+                        max(data[[spd]],na.rm = TRUE))
+        spd.labels <- c(paste(c(spdseq[1:n.spd.seq-1]),
+                              '-',
+                              c(spdseq[2:n.spd.seq])),
+                        paste(spdmax,
+                              "-",
+                              max(data[[spd]],na.rm = TRUE)))
+        spd.colors <- c(spd.colors, "grey50")
+      } else{
+        spd.breaks <- spdseq
+        spd.labels <- paste(c(spdseq[1:n.spd.seq-1]),
+                            '-',
+                            c(spdseq[2:n.spd.seq]))    
+      }
+      data$spd.binned <- cut(x = data[[spd]],
+                             breaks = spd.breaks,
+                             labels = spd.labels,
+                             ordered_result = TRUE)
+      # clean up the data
+      data. <- na.omit(data)
+      
+      # figure out the wind direction bins
+      dir.breaks <- c(-dirres/2,
+                      seq(dirres/2, 360-dirres/2, by = dirres),
+                      360+dirres/2)  
+      dir.labels <- c(paste(360-dirres/2,"-",dirres/2),
+                      paste(seq(dirres/2, 360-3*dirres/2, by = dirres),
+                            "-",
+                            seq(3*dirres/2, 360-dirres/2, by = dirres)),
+                      paste(360-dirres/2,"-",dirres/2))
+      # assign each wind direction to a bin
+      dir.binned <- cut(data[[dir]],
+                        breaks = dir.breaks,
+                        ordered_result = TRUE)
+      levels(dir.binned) <- dir.labels
+      data$dir.binned <- dir.binned
+      
+      # Run debug if required ----
+      if (debug>0){    
+        cat(dir.breaks,"\n")
+        cat(dir.labels,"\n")
+        cat(levels(dir.binned),"\n")       
+      }  
+      
+      # deal with change in ordering introduced somewhere around version 2.2
+      if(packageVersion("ggplot2") > "2.2"){    
+        cat("Hadley broke my code\n")
+        data$spd.binned = with(data, factor(spd.binned, levels = rev(levels(spd.binned))))
+        spd.colors = rev(spd.colors)
+      }
+      
+      # create the plot ----
+      p.windrose <- ggplot(data = data,
+                           aes(x = dir.binned,
+                               fill = spd.binned)) +
+        geom_bar() + 
+        scale_x_discrete(drop = FALSE,
+                         labels = waiver()) +
+        coord_polar(start = -((dirres/2)/360) * 2*pi) +
+        scale_fill_manual(name = "Wind Speed (m/s)", 
+                          values = spd.colors,
+                          drop = FALSE) +
+        #theme_bw() +
+        theme(axis.title.x = element_blank(),
+              #panel.border = element_rect(colour = "blank"),
+              panel.grid.major = element_line(colour="grey65"))
+      
+      # adjust axes if required
+      if (!is.na(countmax)){
+        p.windrose <- p.windrose +
+          ylim(c(0,countmax))
+      }
+      
+      # print the plot
+      print(p.windrose)  
+      
+      # return the handle to the wind rose
+      return(p.windrose)
+    }
     
-    wind_plot<- ggplotly(wind_plot)
+    wind<-plot.windrose(spd = wind$wind_dir,
+                  dir = wind$wind_dir)
     
+    wind
  })
 
 })
