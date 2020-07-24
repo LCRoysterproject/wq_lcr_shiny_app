@@ -1,4 +1,3 @@
-library("shiny")
 library("tidyverse")
 library("shinythemes")
 library("ggplot2")
@@ -62,10 +61,10 @@ ui <- fluidPage(
       
       width = 4,
       
-      selectInput("site1", label= h5("SITE (input needed for all tabs)"), 
+      selectInput("site1", label= h5("SITE (input needed for all tabs, except Wind Rose)"), 
                   choices=c(unique(wq$Site) %>% sort()), selected = 1),
       
-      selectInput("site2", label=h5("COMPARISON SITE (input needed for all tabs)"), 
+      selectInput("site2", label=h5("COMPARISON SITE (input needed for all tabs, except Wind Rose)"), 
                   choices=c("None" = 0, unique(wq$Site) %>% sort()), selected = 6),
       
       
@@ -75,15 +74,15 @@ ui <- fluidPage(
   
       radioButtons("variable",
                    label = h5("OBSERVATIONS (input needed for Data Logger Measurements and Rolling Averages tabs)"),
-                   choices = list("Salinity (ppt, YSI only)" = "Salinity",
-                                  "Conductivity (mS/cm, Lakewatch and YSI)"= "Conductivity",
-                                  "Temperature (C, YSI only)" = "Temperature"),
+                   choices = list("Salinity (ppt)" = "Salinity",
+                                  "Conductivity (mS/cm)"= "Conductivity",
+                                  "Temperature (C) " = "Temperature"),
                    selected = "Salinity"),
       
       h6("Overlay only available in `Hourly` Temporal Resolution (Data Logger Measurements tab)"),
       
       checkboxInput("overlay", 
-                    label = "Overlay point sample data (Salinity, Conductivity, or Temperature)?",
+                    label = "Overlay point sample data (Salinity (YSI only), Conductivity (Lakewatch and YSI), or Temperature (YSI only))?",
                     value = T),
       
       radioButtons("temp_res",
@@ -97,7 +96,7 @@ ui <- fluidPage(
       h4("LAKEWATCH TAB OPTIONS"),
       
       dateRangeInput("date2",
-                     label =h5('DATE RANGE (input needed Lakewatch)'),
+                     label =h5('DATE RANGE (Lakewatch)'),
                      start ="2019-02-01" , end = "2020-02-01"),
       
       radioButtons("variable2",
@@ -110,6 +109,7 @@ ui <- fluidPage(
                                   "Color (Pt-Co Units)" = "Color",
                                   "Secchi (m)" = "Secchi"),
                    selected = c("Phosphorus"))),
+      
     
     
     # The display of the main panel
@@ -124,32 +124,25 @@ ui <- fluidPage(
                   tabPanel(title="DATA LOGGER MEASUREMENTS",
                            br(), 
                            h3("Data selection"),
-                           p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Comparison Site options. Select additional information such as the type of Observations and/or Temporal Resolution. An overlay of YSI/ Lakewatch measurements can also be added to this figure, in the Hourly Temporal Resolution. Missing observations are due to missing or temporarily removed sensors."),
+                           p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Comparison Site options. Select additional information such as the type of Observations and/or Temporal Resolution. An overlay of YSI/ Lakewatch measurements can also be added to this figure, in the Hourly Temporal Resolution. Missing observations are due to corrupt data or temporarily removed sensors."),
                            plotOutput("sensorplot", height = "600px")),
 
                   tabPanel(title="ROLLING AVERAGES", 
                            br(), 
                            h3("Rolling averages definition"),
-                           p("Rolling or moving averages are a way to reduce noise and smooth time series data. Rolling averages were calculated using the function `rollmean()` in the R package `zoo`. Select the desired Date Range, Site and Site Comparison. Select additional information such as the type of Observations (Salinity, Conductivity, or Temperature) for the figure to display."),
+                           p("Rolling or moving averages are a way to reduce noise and smooth time series data. Rolling averages were calculated using the function `rollmean()` in the R package `zoo`. Select the desired Date Range, Site and Comparison Site. Select additional information such as the type of Observations (Salinity, Conductivity, or Temperature) for the figure to display."),
                            plotOutput("rollingplot", height = "600px")),
                   tabPanel(title="LAKEWATCH", 
                            br(), 
                            h3("Data selection"),
-                           p("Updated measurements are avialable every 4 months through Lakewatch (https://lakewatch.ifas.ufl.edu/). Lakewatch measurements are only available for Sites 1-6. Select the desired Date Range, Site and Comparison Site. Select the desired Observation type under LAKEWATCH TAB OPTIONS. Missing observations are due to processing lab time. If no values display in this figure, please select a broader date range."),
+                           p("Updated measurements are available every 4 months through Lakewatch (https://lakewatch.ifas.ufl.edu/). Lakewatch measurements are only available for Sites 1-6. Select the desired Date Range, Site and Comparison Site. Select the desired Observation type under LAKEWATCH TAB OPTIONS. Missing observations are due to processing lab time. If no values display in this figure, please select a broader date range."),
                            plotOutput("labplot", height = "600px")),
-                  tabPanel(title="WINDROSE", 
+                  tabPanel(title="WIND ROSE", 
                            br(), 
                            h3("Wind data"),
-                           p("The windrose displays the magnitude and wind direction of a desired Date Range.Wind speed data are provided by the R package `rnoaa`. Wind data are updated periodically through USGS. If wind data are not displaying in this figure, please select a broader date range."),
-                           plotOutput("wind", height = "600px")),
-                  tabPanel(title="DOWNLOAD MEASUREMENTS", 
-                           h3("Download Options"),
-                           p("Variables selected in the Data Logger Measurements are available for download here."), 
-                           br(), 
-                           downloadButton('downloadData', "Download Water Quality Data"),
-                           br(), 
-                           h3("Table"),
-                           tableOutput("table"))
+                           p("The wind rose below displays the magnitude and wind direction of a desired Date Range. Wind speed and direction data are provided by the R package `rnoaa`. Wind data are updated periodically through USGS (monthly basis). If wind data are not displaying in this figure, please select a broader date range. Wind roses are subject to change as new wind data become available."),
+                           plotOutput("wind", height = "600px"))
+                
                   
       
       )
@@ -759,18 +752,18 @@ server <- shinyServer(function(input, output) {
     wq2<-wq1 %>%
       dplyr::group_by(ymd(Date), Site) %>% 
       dplyr::mutate(
+        three_days = zoo::rollmean(Measure, k = 3, fill = NA),
         seven_days = zoo::rollmean(Measure, k = 7, fill = NA),
-        fifteen_days = zoo::rollmean(Measure, k = 15, fill = NA),
-        twenty_one_days = zoo::rollmean(Measure, k = 21, fill = NA)) %>% 
+        fifteen_days = zoo::rollmean(Measure, k = 15, fill = NA)) %>% 
       dplyr::ungroup()
     
     
     wq3 <- wq2 %>% 
       tidyr::pivot_longer(names_to = "rolling_avg", 
                           values_to = "rolling_value", 
-                          cols = c(seven_days, fifteen_days, twenty_one_days)) 
+                          cols = c(three_days, seven_days, fifteen_days)) 
     
-    wq3$rolling_avg <- factor(wq3$rolling_avg, c("seven_days", "fifteen_days", "twenty_one_days"))
+    wq3$rolling_avg <- factor(wq3$rolling_avg, c("three_days", "seven_days", "fifteen_days"))
     
     rollingplot<- wq3 %>% 
       drop_na("rolling_value") %>%
@@ -970,11 +963,14 @@ server <- shinyServer(function(input, output) {
       return(p.windrose)
     }
     
-    wind<-plot.windrose(spd = wind$wind_dir,
+    wind<-plot.windrose(spd = wind$wind_spd,
                   dir = wind$wind_dir)
     
     wind
+    
+    
  })
+ 
 
 })
 
