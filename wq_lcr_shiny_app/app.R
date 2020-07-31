@@ -107,7 +107,8 @@ ui <- fluidPage(
                                   "Phosphorus (ug/L)" = "Phosphorus",
                                   "Nitrogen (ug/L)" = "Nitrogen",
                                   "Color (Pt-Co Units)" = "Color",
-                                  "Secchi (m)" = "Secchi"),
+                                  "Secchi (m)" = "Secchi",
+                                  "Chlorophyll (ug/L)" = "Chlorophyll"), 
                    selected = c("Phosphorus"))),
       
     
