@@ -96,6 +96,12 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Date > "2020-04-09 23:00:00" & Date < "2020-06-10 23:00:00"))
 
+#Removing observations from site $, Flatilined and muddy starting november 12- november 18
+wq<-wq %>% 
+  filter(!(Site == 5 & Date > "2020-07-15 00:00:00" & Date < "2020-07-31 00:00:00"))
+
+
+
 #Removing all trial 
 wq<-wq %>% 
   filter(!(Site == 0))
@@ -135,6 +141,7 @@ lab$Secchi<- (lab$Secchi/ 3.28)
 # We need to update the sensor_type to the correct names for facetting, 4= YSI and 5= Lakewatch 
 lab$Sensor_Type[lab$Sensor_Type == "34"] <- "LAKEWATCH"
 lab$Sensor_Type[lab$Sensor_Type == "35"] <- "YSI"
+lab$Sensor_Type[lab$Sensor_Type == "37"] <- "YSI"
 
 lab<-lab %>% 
   filter(!(Site == 0))

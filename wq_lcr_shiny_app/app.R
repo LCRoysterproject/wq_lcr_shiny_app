@@ -70,7 +70,7 @@ ui <- fluidPage(
       
       dateRangeInput("date",
                      label =h5('DATE RANGE (input needed for Data Logger, Rolling Averages and Windrose Tabs)'),
-                     start = Sys.Date() -30 , end = Sys.Date()),
+                     start = Sys.Date() -45 , end = Sys.Date()),
   
       radioButtons("variable",
                    label = h5("OBSERVATIONS (input needed for Data Logger Measurements and Rolling Averages tabs)"),
