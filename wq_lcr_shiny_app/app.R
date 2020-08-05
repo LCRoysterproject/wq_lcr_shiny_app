@@ -126,7 +126,8 @@ ui <- fluidPage(
                            br(), 
                            h3("Data selection"),
                            p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Comparison Site options. Select additional information such as the type of Observations and/or Temporal Resolution. An overlay of YSI/ Lakewatch measurements can also be added to this figure, in the Hourly Temporal Resolution. Missing observations are due to corrupt data or temporarily removed sensors."),
-                           plotOutput("sensorplot", height = "600px")),
+                           plotOutput("sensorplot", height = "600px"),
+                  downloadButton(outputId = "download_sensor", label = "Download these Data Logger observations")),
 
                   tabPanel(title="ROLLING AVERAGES", 
                            br(), 
@@ -137,16 +138,16 @@ ui <- fluidPage(
                            br(), 
                            h3("Data selection"),
                            p("Updated measurements are available every 4 months through Lakewatch (https://lakewatch.ifas.ufl.edu/). Lakewatch measurements are only available for Sites 1-6. Select the desired Date Range, Site and Comparison Site. Select the desired Observation type under LAKEWATCH TAB OPTIONS. Missing observations are due to processing lab time. If no values display in this figure, please select a broader date range."),
-                           plotOutput("labplot", height = "600px")),
+                           plotOutput("labplot", height = "600px"),
+                           downloadButton(outputId = "download_lab", label = "Download these Lakewatch results")),
                   tabPanel(title="WIND ROSE", 
                            br(), 
                            h3("Wind data"),
                            p("The wind rose below displays the magnitude and wind direction of a desired Date Range. Wind speed and direction data are provided by the R package `rnoaa`. Wind data are updated periodically through USGS (monthly basis). If wind data are not displaying in this figure, please select a broader date range. Wind roses are subject to change as new wind data become available."),
-                           plotOutput("wind", height = "600px"))
+                           plotOutput("wind_plot", height = "600px"),
+                           downloadButton(outputId = "download_wind", label = "Download this wind rose"))
                 
-                  
-      
-      )
+      )           
     )
   )
 )
@@ -154,7 +155,7 @@ ui <- fluidPage(
 server <- shinyServer(function(input, output) {
   
   # Can directly use renderPlot instead of having reactive first
-  output$sensorplot <- renderPlot({
+  sensorplot <- reactive({
     site1 <- as.numeric(input$site1)
     site2 <- as.numeric(input$site2)
     startDate <- paste(input$date[1], "00:00:00") %>% ymd_hms(tz="UTC")
@@ -246,7 +247,23 @@ server <- shinyServer(function(input, output) {
     sensorplot
   })
   
-  output$labplot<-renderPlot({
+  
+  output$sensorplot <-renderPlot({
+    sensorplot()
+    
+  })
+  
+  output$download_sensor <- downloadHandler(
+    filename = function() {
+      "plot.jpeg"
+    },
+    content = function(file) {
+      ggsave(file, sensorplot(), width = 10, height = 8)
+    }
+  )
+  
+  
+  labplot<-reactive({
     site1 <- as.numeric(input$site1)
     site2 <- as.numeric(input$site2)
     startDate <- paste(input$date2[1], "00:00:00") %>% ymd_hms(tz="UTC")
@@ -286,6 +303,20 @@ server <- shinyServer(function(input, output) {
     
     labplot
   })
+  
+  output$labplot <-renderPlot({
+    labplot()
+    
+  })
+  
+  output$download_lab <- downloadHandler(
+    filename = function() {
+      "plot.jpeg"
+    },
+    content = function(file) {
+      ggsave(file, labplot(), width = 10, height = 8)
+    }
+  )
   
   
   output$map <- renderUI({
@@ -819,7 +850,7 @@ server <- shinyServer(function(input, output) {
       write.csv(datasetInput(), file, row.names = FALSE)
     })
   
-  output$wind<- renderPlot({
+  wind_plot<- reactive({
     
     startDate <- paste(input$date[1], "00:00:00") %>% ymd_hms(tz="UTC")
     endDate <- paste(input$date[2], "23:00:00") %>% ymd_hms(tz="UTC")
@@ -971,7 +1002,21 @@ server <- shinyServer(function(input, output) {
     
     
  })
- 
+  
+  output$wind_plot <-renderPlot({
+   wind_plot()
+    
+  })
+  
+  
+  output$download_wind <- downloadHandler(
+    filename = function() {
+      "plot.jpeg"
+    },
+    content = function(file) {
+      ggsave(file,  wind_plot(), width = 10, height = 13)
+    }
+  )
 
 })
 
