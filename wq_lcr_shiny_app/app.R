@@ -131,6 +131,13 @@ ui <- fluidPage(
                            p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Comparison Site options. Select additional information such as the type of Observations and/or Temporal Resolution. An overlay of YSI/ Lakewatch measurements can also be added to this figure, in the Hourly Temporal Resolution. Missing observations are due to corrupt data or temporarily removed sensors."),
                            plotOutput("sensorplot", height = "600px"),
                   downloadButton(outputId = "download_sensor", label = "Download these Data Logger observations")),
+                  
+                  tabPanel(title=" ALL SITES COMPARISON",
+                           br(), 
+                           h3("Data selection"),
+                           p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range and variable.  Missing observations are due to corrupt data or temporarily removed sensors."),
+                           plotOutput("allsites", height = "600px"),
+                           downloadButton(outputId = "download_allsites", label = "Download all sites observations")),
 
                   tabPanel(title="ROLLING AVERAGES", 
                            br(), 
@@ -264,6 +271,64 @@ server <- shinyServer(function(input, output) {
       ggsave(file, sensorplot(), width = 10, height = 8)
     }
   )
+  
+  
+  allsites <- reactive({
+    
+    startDate <- paste(input$date[1], "00:00:00") %>% ymd_hms(tz="UTC")
+    endDate <- paste(input$date[2], "23:00:00") %>% ymd_hms(tz="UTC")
+    
+    
+    wq1 <- wq %>% 
+      filter(Date >= startDate & Date <= endDate) %>% 
+      select(Site, Date, Measure = input$variable)
+    
+    wq2 <- wq1 %>%
+      mutate(Date1 = date(Date)) %>%
+      group_by(Site, Date1) %>%
+      summarise(Measure = mean(Measure)) %>%
+      select(Site, Date=Date1, Measure)
+    
+    #d <- seq(startDate, endDate, by = "day") %>% date
+    #df <- data.frame(Site = rep(c(site1, site2), each = length(d)),
+                     #Date = rep(d, 2)) %>%
+      #distinct() %>%
+      #left_join(wq2)
+    
+  
+    # Remove Site 0 from the df we built
+    wq2  <-  wq2 %>%
+      filter(Site != 0) %>% 
+      filter(Site != 10)
+
+    wq2 $Site <- factor( wq2 $Site, levels = c("6", "1", "7", "5", "2", "8","4", "3", "9"))
+    
+    # Base version of the plot
+    allsites <- ggplot(wq2, aes(x = Date, y = Measure)) +
+      ylab(input$variable) +
+      geom_line() +
+      theme_gray(base_size = 14) +
+      theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
+      facet_wrap(~Site, ncol = 3, labeller = label_both) +
+      theme(strip.text = element_text(size=30), 
+            axis.text = element_text(size=20), 
+            axis.title = element_text(size=20),
+            panel.background = element_blank(),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            axis.line = element_line(colour = "black"),
+            panel.border = element_rect(colour = "black", fill=NA, size=1))
+  
+  
+  allsites
+  
+  })
+  
+  output$allsites <-renderPlot({
+    allsites()
+    
+  })
+  
   
   
   labplot<-reactive({
