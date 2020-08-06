@@ -330,6 +330,14 @@ server <- shinyServer(function(input, output) {
   })
   
   
+  output$download_allsites <- downloadHandler(
+    filename = function() {
+      "plot.jpeg"
+    },
+    content = function(file) {
+      ggsave(file,  allsites(), width = 20, height = 13)
+    })
+  
   
   labplot<-reactive({
     site1 <- as.numeric(input$site1)
@@ -1048,7 +1056,9 @@ server <- shinyServer(function(input, output) {
         #theme_bw() +
         theme(axis.title.x = element_blank(),
               #panel.border = element_rect(colour = "blank"),
-              panel.grid.major = element_line(colour="grey65"))
+              panel.grid.major = element_line(colour="grey65"),
+              axis.text = element_text(size=13), 
+              axis.title = element_text(size=13))
       
       # adjust axes if required
       if (!is.na(countmax)){
