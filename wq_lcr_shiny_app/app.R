@@ -135,7 +135,7 @@ ui <- fluidPage(
                   tabPanel(title=" ALL SITES COMPARISON",
                            br(), 
                            h3("Data selection"),
-                           p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range and variable.  Missing observations are due to corrupt data or temporarily removed sensors."),
+                           p("Daily mean observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range and variable.  Missing observations are due to corrupt data or temporarily removed sensors."),
                            plotOutput("allsites", height = "600px"),
                            downloadButton(outputId = "download_allsites", label = "Download all sites observations")),
 
@@ -153,7 +153,7 @@ ui <- fluidPage(
                   tabPanel(title="WIND ROSE", 
                            br(), 
                            h3("Wind data"),
-                           p("The wind rose below displays the magnitude and wind direction of a desired Date Range. Wind speed and direction data are provided by the R package `rnoaa`. Wind data are updated periodically through USGS (monthly basis). If wind data are not displaying in this figure, please select a broader date range. Wind roses are subject to change as new wind data become available."),
+                           p("A wind rose visualizes the frequency of winds blowing from a specific direction of a desired Date Range. The data used for this figure were collected via the `rnoaa` R Package at station CDRF1 (Cedar Key, Florida). The legend represents the wind speed ranging from low (2-4 m/s) to high (18-20 m/s) wind speeds. The cardinal directions on the outer part of the wind rose indicate the direction of the wind. The Frequency is displayed as the lowest to highest percentage frequency of a wind speed occuring in a given direction, by the size of the wind magnitude polygon. Wind data are updated periodically through USGS (monthly basis). If wind data are not displaying in this figure, please select a broader date range. Wind roses are subject to change as new wind data become available."),
                            plotOutput("wind_plot", height = "600px"),
                            downloadButton(outputId = "download_wind", label = "Download this wind rose"))
                 
@@ -217,9 +217,11 @@ server <- shinyServer(function(input, output) {
     df$Site <- factor_site_seq(df$Site, site1, site2)
     
     # Base version of the plot
-    sensorplot <- ggplot(df, aes(x = Date, y = Measure)) +
+    sensorplot <- ggplot(df, aes(x = as.POSIXct(Date), y = Measure)) +
       ylab(input$variable) +
+      xlab("Date") +
       geom_line() +
+      scale_x_datetime(date_labels = "%m-%d-%Y") +
       theme_gray(base_size = 14) +
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
       facet_wrap(~Site, ncol = 1, labeller = label_both) +
@@ -230,7 +232,8 @@ server <- shinyServer(function(input, output) {
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
             axis.line = element_line(colour = "black"),
-            panel.border = element_rect(colour = "black", fill=NA, size=1))
+            panel.border = element_rect(colour = "black", fill=NA, size=1),
+            axis.text.x = element_text(angle = 45, hjust = 1))
     
     
     # Add feature if we want to overlay the point sample data
@@ -245,11 +248,12 @@ server <- shinyServer(function(input, output) {
       
       if (input$temp_res == "Hourly") {
         sensorplot <- sensorplot + 
-          geom_point(data = lab1, aes(x = Date, y = Measure, colour = Sensor_Type), shape = 17, size = 5) +
+          geom_point(data = lab1, aes(x = Date, y = Measure, 
+                                      colour = Sensor_Type), shape = 17, size = 5) +
           scale_color_manual(name = "Method", values = c("red", "blue")) 
         
       } else if (input$temp_res == "Daily") {
-        sensorplot 
+        sensorplot
       }
       
     }
@@ -288,13 +292,6 @@ server <- shinyServer(function(input, output) {
       group_by(Site, Date1) %>%
       summarise(Measure = mean(Measure)) %>%
       select(Site, Date=Date1, Measure)
-    
-    #d <- seq(startDate, endDate, by = "day") %>% date
-    #df <- data.frame(Site = rep(c(site1, site2), each = length(d)),
-                     #Date = rep(d, 2)) %>%
-      #distinct() %>%
-      #left_join(wq2)
-    
   
     # Remove Site 0 from the df we built
     wq2  <-  wq2 %>%
@@ -304,9 +301,12 @@ server <- shinyServer(function(input, output) {
     wq2 $Site <- factor( wq2 $Site, levels = c("6", "1", "7", "5", "2", "8","4", "3", "9"))
     
     # Base version of the plot
-    allsites <- ggplot(wq2, aes(x = Date, y = Measure)) +
+    allsites <- ggplot(wq2, aes(x = as.POSIXct(Date), y = Measure)) +
       ylab(input$variable) +
       geom_line() +
+      xlab("Date") +
+      ggtitle(paste("Daily Mean Observations of",input$variable)) +
+      scale_x_datetime(date_labels = "%m-%d-%Y") +
       theme_gray(base_size = 14) +
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
       facet_wrap(~Site, ncol = 3, labeller = label_both) +
@@ -317,7 +317,8 @@ server <- shinyServer(function(input, output) {
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
             axis.line = element_line(colour = "black"),
-            panel.border = element_rect(colour = "black", fill=NA, size=1))
+            panel.border = element_rect(colour = "black", fill=NA, size=1),
+            axis.text.x = element_text(angle = 45, hjust = 1))
   
   
   allsites
@@ -358,12 +359,11 @@ server <- shinyServer(function(input, output) {
     # Use similar trick as we did in sensorplot (e.g. build a df)
     labplot <- ggplot(lab1, aes(x = Date, y = Measure)) +
       ylab(input$variable2) +
+      ggtitle(paste(input$variable2, "Lakewatch Results")) +
       geom_point(shape = 17, size = 5) +
-      #scale_color_manual(name = "Method", values = c("red", "blue")) +
-      scale_x_datetime(
-        #   breaks = date_breaks("month") ,
-        #   labels = date_format("%m/%Y")
-        limits = c(startDate, endDate)) +
+      scale_x_datetime(limits = c(startDate, endDate),
+                       date_labels = "%m-%Y",
+                       breaks= "1 month") +
       theme_gray(base_size = 14) +
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
       facet_wrap(~ Site, ncol = 1, labeller = label_both) +
@@ -374,7 +374,8 @@ server <- shinyServer(function(input, output) {
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
             axis.line = element_line(colour = "black"),
-            panel.border = element_rect(colour = "black", fill=NA, size=1))
+            panel.border = element_rect(colour = "black", fill=NA, size=1),
+            axis.text.x = element_text(angle = 45, hjust = 1))
     
     
     labplot
@@ -860,26 +861,31 @@ server <- shinyServer(function(input, output) {
     wq2<-wq1 %>%
       dplyr::group_by(ymd(Date), Site) %>% 
       dplyr::mutate(
-        three_days = zoo::rollmean(Measure, k = 3, fill = NA),
-        seven_days = zoo::rollmean(Measure, k = 7, fill = NA),
-        fifteen_days = zoo::rollmean(Measure, k = 15, fill = NA)) %>% 
+        "Three Days" = zoo::rollmean(Measure, k = 3, fill = NA),
+        "Seven Days" = zoo::rollmean(Measure, k = 7, fill = NA),
+        "Fifteen Days" = zoo::rollmean(Measure, k = 15, fill = NA)) %>% 
       dplyr::ungroup()
     
     
     wq3 <- wq2 %>% 
-      tidyr::pivot_longer(names_to = "rolling_avg", 
+      tidyr::pivot_longer(names_to = "Rolling_Avg", 
                           values_to = "rolling_value", 
-                          cols = c(three_days, seven_days, fifteen_days)) 
+                          cols = c("Three Days", "Seven Days", "Fifteen Days")) 
     
-    wq3$rolling_avg <- factor(wq3$rolling_avg, c("three_days", "seven_days", "fifteen_days"))
+    wq3$Rolling_Avg <- factor(wq3$Rolling_Avg, c("Three Days", "Seven Days", "Fifteen Days"))
+    
+   
     
     rollingplot<- wq3 %>% 
       drop_na("rolling_value") %>%
       ggplot(aes(x = Date, y = Measure)) +
-      geom_line(aes(y = rolling_value, color = rolling_avg, group= rolling_avg), size = 1.1) +
+      geom_line(aes(y = rolling_value, 
+                    color = Rolling_Avg, group= Rolling_Avg), size = 1.1) +
       ylab(input$variable) + 
       xlab("Date")+
-      facet_wrap(~Site + rolling_avg, labeller = label_both) +
+      ggtitle(paste("Rolling Averages of Sites ",input$site1, "and", input$site2)) +
+      scale_x_datetime(date_labels = "%m-%d-%Y") +
+      facet_wrap(~Site + Rolling_Avg, labeller = label_both) +
       theme(legend.position = "none", 
         strip.text = element_text(size=15), 
             axis.text = element_text(size=15), 
@@ -888,7 +894,8 @@ server <- shinyServer(function(input, output) {
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
             axis.line = element_line(colour = "black"),
-            panel.border = element_rect(colour = "black", fill=NA, size=1))
+            panel.border = element_rect(colour = "black", fill=NA, size=1),
+        axis.text.x = element_text(angle = 45, hjust = 1))
     
     rollingplot
     
@@ -936,14 +943,15 @@ server <- shinyServer(function(input, output) {
     
     wind <- wind %>%
       filter(time >= startDate & time <= endDate) %>%
-      select(time, wind_spd, wind_dir)
+      select(time, wind_spd, wind_dir) %>% 
+      na.omit()
     
     
     plot.windrose <- function(data,
                               spd,
                               dir,
                               spdres = 2,
-                              dirres = 30,
+                              dirres = 22.5,
                               spdmin = 2,
                               spdmax = 20,
                               spdseq = NULL,
@@ -1009,8 +1017,6 @@ server <- shinyServer(function(input, output) {
                              breaks = spd.breaks,
                              labels = spd.labels,
                              ordered_result = TRUE)
-      # clean up the data
-      data. <- na.omit(data)
       
       # figure out the wind direction bins
       dir.breaks <- c(-dirres/2,
@@ -1032,33 +1038,34 @@ server <- shinyServer(function(input, output) {
       if (debug>0){    
         cat(dir.breaks,"\n")
         cat(dir.labels,"\n")
-        cat(levels(dir.binned),"\n")       
+        cat(levels(dir.binned),"\n")
+        
       }  
-      
-      # deal with change in ordering introduced somewhere around version 2.2
-      if(packageVersion("ggplot2") > "2.2"){    
-        cat("Hadley broke my code\n")
-        data$spd.binned = with(data, factor(spd.binned, levels = rev(levels(spd.binned))))
-        spd.colors = rev(spd.colors)
-      }
       
       # create the plot ----
       p.windrose <- ggplot(data = data,
                            aes(x = dir.binned,
-                               fill = spd.binned)) +
+                               fill = spd.binned
+                               ,y = (..count..)/sum(..count..)
+                           ))+
         geom_bar() + 
+        ylab("Percentage of Frequency")+
+        scale_y_continuous(labels = percent) +
         scale_x_discrete(drop = FALSE,
-                         labels = waiver()) +
+                         labels = c("N","NNE","NE","ENE", "E", 
+                                    "ESE", "SE","SSE", 
+                                    "S","SSW", "SW","WSW", "W", 
+                                    "WNW","NW","NNW")) +
         coord_polar(start = -((dirres/2)/360) * 2*pi) +
         scale_fill_manual(name = "Wind Speed (m/s)", 
                           values = spd.colors,
                           drop = FALSE) +
-        #theme_bw() +
         theme(axis.title.x = element_blank(),
-              #panel.border = element_rect(colour = "blank"),
-              panel.grid.major = element_line(colour="grey65"),
-              axis.text = element_text(size=13), 
-              axis.title = element_text(size=13))
+              axis.text = element_text(size=13, face= "bold"), 
+              axis.title = element_text(size=13, face= "bold"),
+              legend.text = element_text(size = 12)) + 
+    
+   
       
       # adjust axes if required
       if (!is.na(countmax)){
@@ -1072,7 +1079,6 @@ server <- shinyServer(function(input, output) {
       # return the handle to the wind rose
       return(p.windrose)
     }
-    
     wind<-plot.windrose(spd = wind$wind_spd,
                   dir = wind$wind_dir)
     
