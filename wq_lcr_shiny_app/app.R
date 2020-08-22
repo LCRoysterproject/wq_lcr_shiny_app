@@ -1042,20 +1042,35 @@ server <- shinyServer(function(input, output) {
         
       }  
       
-      # create the plot ----
-      p.windrose <- ggplot(data = data,
-                           aes(x = dir.binned,
-                               fill = spd.binned
-                               ,y = (..count..)/sum(..count..)
-                           ))+
-        geom_bar() + 
-        ylab("Percentage of Frequency")+
-        scale_y_continuous(labels = percent) +
+      
+      # Create the labels:
+      x_location <- pi # x location of the labels
+      
+      # Get the percentage
+      T_data <- data %>%
+        dplyr::group_by(dir.binned) %>%
+        dplyr::summarise(count= n()) %>%
+        dplyr::mutate(y = count/sum(count))
+      
+      labels <- data.frame(x = x_location,
+                           y = scales::extended_breaks()(range(T_data$y)))
+      
+      
+      # create the plot ---
+        
+        p.windrose <- ggplot() +
+        geom_bar(data = data,
+                 aes(x = dir.binned, y = (..count..)/sum(..count..),
+                     fill = spd.binned))+
+        geom_text(data = labels,
+                  aes(x=x, y=y, label = scales::percent(y, 1))) +
+        scale_y_continuous(breaks = waiver(),labels=NULL)+
         scale_x_discrete(drop = FALSE,
                          labels = c("N","NNE","NE","ENE", "E", 
                                     "ESE", "SE","SSE", 
                                     "S","SSW", "SW","WSW", "W", 
                                     "WNW","NW","NNW")) +
+        ylab("")+xlab("")+
         coord_polar(start = -((dirres/2)/360) * 2*pi) +
         scale_fill_manual(name = "Wind Speed (m/s)", 
                           values = spd.colors,
@@ -1063,8 +1078,9 @@ server <- shinyServer(function(input, output) {
         theme(axis.title.x = element_blank(),
               axis.text = element_text(size=13, face= "bold"), 
               axis.title = element_text(size=13, face= "bold"),
-              legend.text = element_text(size = 12)) + 
-    
+              legend.text = element_text(size = 12))
+        
+        
    
       
       # adjust axes if required
