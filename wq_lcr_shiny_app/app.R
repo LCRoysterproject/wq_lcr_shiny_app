@@ -8,6 +8,7 @@ library("ncdf4")
 library("rnoaa")
 library("plotly")
 library("RColorBrewer")
+library("scales")
 
 #Make sure to be on the project directory before starting the Shiny App
 
@@ -46,7 +47,6 @@ factor_site_seq <- function (vec, site1, site2) {
 ###Wind data
 
 wind <- read_rds("data/wind.rds")
-
 
 
 #### Front of the app, the user interface
@@ -130,14 +130,14 @@ ui <- fluidPage(
                            h3("Data selection"),
                            p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Comparison Site options. Select additional information such as the type of Observations and/or Temporal Resolution. An overlay of YSI/ Lakewatch measurements can also be added to this figure, in the Hourly Temporal Resolution. Missing observations are due to corrupt data or temporarily removed sensors."),
                            plotOutput("sensorplot", height = "600px"),
-                  downloadButton(outputId = "download_sensor", label = "Download these Data Logger observations")),
+                  downloadButton(outputId = "download_sensor", label = "Download this figure")),
                   
                   tabPanel(title=" ALL SITES COMPARISON",
                            br(), 
                            h3("Data selection"),
                            p("Daily mean observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range and variable.  Missing observations are due to corrupt data or temporarily removed sensors."),
                            plotOutput("allsites", height = "600px"),
-                           downloadButton(outputId = "download_allsites", label = "Download all sites observations")),
+                           downloadButton(outputId = "download_allsites", label = "Download this figure")),
 
                   tabPanel(title="ROLLING AVERAGES", 
                            br(), 
@@ -149,7 +149,7 @@ ui <- fluidPage(
                            h3("Data selection"),
                            p("Updated measurements are available every 4 months through Lakewatch (https://lakewatch.ifas.ufl.edu/). Lakewatch measurements are only available for Sites 1-6. Select the desired Date Range, Site and Comparison Site. Select the desired Observation type under LAKEWATCH TAB OPTIONS. Missing observations are due to processing lab time. If no values display in this figure, please select a broader date range."),
                            plotOutput("labplot", height = "600px"),
-                           downloadButton(outputId = "download_lab", label = "Download these Lakewatch results")),
+                           downloadButton(outputId = "download_lab", label = "Download this figure")),
                   tabPanel(title="WIND ROSE", 
                            br(), 
                            h3("Wind data"),
@@ -220,7 +220,7 @@ server <- shinyServer(function(input, output) {
     sensorplot <- ggplot(df, aes(x = as.POSIXct(Date), y = Measure)) +
       ylab(input$variable) +
       xlab("Date") +
-      geom_line() +
+      geom_path(na.rm = TRUE) +
       scale_x_datetime(date_labels = "%m-%d-%Y") +
       theme_gray(base_size = 14) +
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
@@ -248,7 +248,7 @@ server <- shinyServer(function(input, output) {
       
       if (input$temp_res == "Hourly") {
         sensorplot <- sensorplot + 
-          geom_point(data = lab1, aes(x = Date, y = Measure, 
+          geom_point(data = lab1, aes(x = as.POSIXct(Date), y = Measure, 
                                       colour = Sensor_Type), shape = 17, size = 5) +
           scale_color_manual(name = "Method", values = c("red", "blue")) 
         
@@ -279,31 +279,37 @@ server <- shinyServer(function(input, output) {
   
   allsites <- reactive({
     
+    
     startDate <- paste(input$date[1], "00:00:00") %>% ymd_hms(tz="UTC")
     endDate <- paste(input$date[2], "23:00:00") %>% ymd_hms(tz="UTC")
-    
     
     wq1 <- wq %>% 
       filter(Date >= startDate & Date <= endDate) %>% 
       select(Site, Date, Measure = input$variable)
+  
     
     wq2 <- wq1 %>%
       mutate(Date1 = date(Date)) %>%
       group_by(Site, Date1) %>%
       summarise(Measure = mean(Measure)) %>%
       select(Site, Date=Date1, Measure)
+    
+    d <- seq(startDate, endDate, by = "day") %>% date
+    df <- data.frame(Date = rep(d, 2)) %>%
+      distinct() %>%
+      left_join(wq2)
   
     # Remove Site 0 from the df we built
     wq2  <-  wq2 %>%
       filter(Site != 0) %>% 
       filter(Site != 10)
-
+    
     wq2 $Site <- factor( wq2 $Site, levels = c("6", "1", "7", "5", "2", "8","4", "3", "9"))
     
     # Base version of the plot
     allsites <- ggplot(wq2, aes(x = as.POSIXct(Date), y = Measure)) +
       ylab(input$variable) +
-      geom_line() +
+      geom_path() +
       xlab("Date") +
       ggtitle(paste("Daily Mean Observations of",input$variable)) +
       scale_x_datetime(date_labels = "%m-%d-%Y") +
@@ -879,8 +885,8 @@ server <- shinyServer(function(input, output) {
     rollingplot<- wq3 %>% 
       drop_na("rolling_value") %>%
       ggplot(aes(x = Date, y = Measure)) +
-      geom_line(aes(y = rolling_value, 
-                    color = Rolling_Avg, group= Rolling_Avg), size = 1.1) +
+      geom_path(aes(y = rolling_value, 
+                    color = Rolling_Avg, group= Rolling_Avg),na.rm = TRUE, size = 1.1) +
       ylab(input$variable) + 
       xlab("Date")+
       ggtitle(paste("Rolling Averages of Sites ",input$site1, "and", input$site2)) +
@@ -943,8 +949,7 @@ server <- shinyServer(function(input, output) {
     
     wind <- wind %>%
       filter(time >= startDate & time <= endDate) %>%
-      select(time, wind_spd, wind_dir) %>% 
-      na.omit()
+      select(time, wind_spd, wind_dir) 
     
     
     plot.windrose <- function(data,
@@ -1042,6 +1047,15 @@ server <- shinyServer(function(input, output) {
         
       }  
       
+<<<<<<< HEAD
+      # create the plot ----
+      p.windrose <- ggplot(data = data,
+                           aes(x = dir.binned,
+                               fill = spd.binned
+                               ,y = (..count..)/sum(..count..)
+                           ))+
+        geom_bar() + 
+=======
       
       # Create the labels:
       x_location <- pi # x location of the labels
@@ -1065,6 +1079,7 @@ server <- shinyServer(function(input, output) {
         geom_text(data = labels,
                   aes(x=x, y=y, label = scales::percent(y, 1))) +
         scale_y_continuous(breaks = waiver(),labels=NULL)+
+>>>>>>> 4b6cd0841af11cb79e1fb7861f52143c680eef87
         scale_x_discrete(drop = FALSE,
                          labels = c("N","NNE","NE","ENE", "E", 
                                     "ESE", "SE","SSE", 
@@ -1078,10 +1093,16 @@ server <- shinyServer(function(input, output) {
         theme(axis.title.x = element_blank(),
               axis.text = element_text(size=13, face= "bold"), 
               axis.title = element_text(size=13, face= "bold"),
+<<<<<<< HEAD
+              legend.text = element_text(size = 12)) + 
+        scale_y_continuous(labels = percent) +
+        ylab("Percentage Frequency")
+=======
               legend.text = element_text(size = 12))
         
         
    
+>>>>>>> 4b6cd0841af11cb79e1fb7861f52143c680eef87
       
       # adjust axes if required
       if (!is.na(countmax)){
@@ -1095,6 +1116,8 @@ server <- shinyServer(function(input, output) {
       # return the handle to the wind rose
       return(p.windrose)
     }
+    
+    
     wind<-plot.windrose(spd = wind$wind_spd,
                   dir = wind$wind_dir)
     

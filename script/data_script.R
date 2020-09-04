@@ -88,7 +88,7 @@ wq<-wq %>%
   filter(!(Site == 2 & Date > "2019-10-01 23:00:00" & Date < "2019-10-15 23:00:00"))
 
 
-#Removing observations from site $, Flatilined and muddy starting november 12- november 18
+#Removing observations from site 4, Flatilined and muddy starting november 12- november 18
 wq<-wq %>% 
   filter(!(Site == 4 & Date > "2019-11-11 23:00:00" & Date < "2019-11-18 23:00:00"))
 
@@ -96,9 +96,18 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Date > "2020-04-09 23:00:00" & Date < "2020-06-10 23:00:00"))
 
-#Removing observations from site $, Flatilined and muddy starting november 12- november 18
+#Removing observations from site 5, flatlines
 wq<-wq %>% 
   filter(!(Site == 5 & Date > "2020-07-15 00:00:00" & Date < "2020-07-31 00:00:00"))
+
+#Removing observations from site 10, Flatilined on last day
+wq<-wq %>% 
+  filter(!(Site == 10 & Date > "2020-08-26 00:00:00" & Date < "2020-08-27 23:00:00"))
+
+#Removing observations from site 8, Flatilined on last observation
+wq<-wq %>% 
+  filter(!(Site == 8 & Date > "2020-08-26 00:00:00" & Date < "2020-08-27 23:00:00"))
+
 
 
 
@@ -148,6 +157,12 @@ lab<-lab %>%
 
 #Writting as a .csv for the Shiny App
 write.csv(lab, file = "wq_lcr_shiny_app/data/lab.csv")
+
+lakewatch<-lab %>% 
+  filter(Sensor_Type == "LAKEWATCH")
+
+write.csv(lab, file = "wq_lcr_shiny_app/data/lakewatch.csv")
+
 
 
 ###Wind data
