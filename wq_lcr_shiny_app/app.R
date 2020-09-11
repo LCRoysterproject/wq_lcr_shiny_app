@@ -123,7 +123,7 @@ ui <- fluidPage(
                            p("Use the drop-down boxes Site and Comparison Site to dynamically change this map. The selected sites will be circled on the map."),
                            uiOutput("map",align = "left",
                                     style = 'float:left;'),
-                           img(src='shiny_app_map.jpg', align = "right",  height = "405px"),
+                           img(src='shiny_app_map.jpg', align = "right",  height = "400px"),
                            style = 'float:right;'),
                   tabPanel(title="DATA LOGGER MEASUREMENTS",
                            br(), 
@@ -404,447 +404,447 @@ server <- shinyServer(function(input, output) {
   
   output$map <- renderUI({
     if(input$site1== "1" & input$site2 == "6" ){            
-      img(height = 400, width = 600, src = "1_6.jpg")
+      img(height = 350, width = 500, src = "1_6.jpg")
     } 
     else if(input$site2== "1" & input$site1 == "6" ){            
-      img(height = 400, width = 600, src = "1_6.jpg")
+      img(height = 350, width = 500, src = "1_6.jpg")
     }  
     
     else if(input$site2== "1" & input$site1 == "1" ){            
-      img(height = 400, width = 600, src = "1_N.jpg")
+      img(height = 350, width = 500, src = "1_N.jpg")
     }  
     else if(input$site1== "1" & input$site2 == "1"){
-      img(height = 400, width = 600, src = "1_N.jpg")
+      img(height = 350, width = 500, src = "1_N.jpg")
     }
     else if(input$site1== "1" & input$site2 == "2"){
-      img(height = 400, width = 600, src = "1_2.jpg")
+      img(height = 350, width = 500, src = "1_2.jpg")
     }
     else if(input$site2== "1" & input$site1 == "2"){
-      img(height = 400, width = 600, src = "1_2.jpg")
+      img(height = 350, width = 500, src = "1_2.jpg")
     }
     else if(input$site1== "1" & input$site2 == "3"){
-      img(height = 400, width = 600, src = "1_3.jpg")
+      img(height = 350, width = 500, src = "1_3.jpg")
     }
     else if(input$site2== "1" & input$site1 == "3"){
-      img(height = 400, width = 600, src = "1_3.jpg")
+      img(height = 350, width = 500, src = "1_3.jpg")
     }
     
     else if(input$site1== "1" & input$site2 == "4"){
-      img(height = 400, width = 600, src = "1_4.jpg")
+      img(height = 350, width = 500, src = "1_4.jpg")
     }
     else if(input$site2== "1" & input$site1 == "4"){
-      img(height = 400, width = 600, src = "1_4.jpg")
+      img(height = 350, width = 500, src = "1_4.jpg")
     }
     else if(input$site1== "1" & input$site2 == "5"){
-      img(height = 400, width = 600, src = "1_5.jpg")
+      img(height = 350, width = 500, src = "1_5.jpg")
     }
     else if(input$site2== "1" & input$site1 == "5"){
-      img(height = 400, width = 600, src = "1_5.jpg")
+      img(height = 350, width = 500, src = "1_5.jpg")
     }
     
     else if(input$site1== "1" & input$site2 == "7"){
-      img(height = 400, width = 600, src = "1_7.jpg")
+      img(height = 350, width = 500, src = "1_7.jpg")
     }
     else if(input$site2== "1" & input$site1 == "7"){
-      img(height = 400, width = 600, src = "1_7.jpg")
+      img(height = 350, width = 500, src = "1_7.jpg")
     }
     
     else if(input$site1== "1" & input$site2 == "8"){
-      img(height = 400, width = 600, src = "1_8.jpg")
+      img(height = 350, width = 500, src = "1_8.jpg")
     }
     else if(input$site2== "1" & input$site1 == "8"){
-      img(height = 400, width = 600, src = "1_8.jpg")
+      img(height = 350, width = 500, src = "1_8.jpg")
     }
     
     else if(input$site1== "1" & input$site2 == "9"){
-      img(height = 400, width = 600, src = "1_9.jpg")
+      img(height = 350, width = 500, src = "1_9.jpg")
     }
     else if(input$site2== "1" & input$site1 == "9"){
-      img(height = 400, width = 600, src = "1_9.jpg")
+      img(height = 350, width = 500, src = "1_9.jpg")
     }
     else if(input$site1== "1" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "1_10.jpg")
+      img(height = 350, width = 500, src = "1_10.jpg")
     }
     else if(input$site2== "1" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "1_10.jpg")
+      img(height = 350, width = 500, src = "1_10.jpg")
     }
     else if(input$site1== "1" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "1_N.jpg")
+      img(height = 350, width = 500, src = "1_N.jpg")
     }
     else if(input$site2== "1" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "1_N.jpg")
+      img(height = 350, width = 500, src = "1_N.jpg")
     }
     else if(input$site1== "2" & input$site2 == "3"){
-      img(height = 400, width = 600, src = "2_3.jpg")
+      img(height = 350, width = 500, src = "2_3.jpg")
     }
     else if(input$site2== "2" & input$site1 == "3"){
-      img(height = 400, width = 600, src = "2_3.jpg")
+      img(height = 350, width = 500, src = "2_3.jpg")
     }
     else if(input$site1== "2" & input$site2 == "4"){
-      img(height = 400, width = 600, src = "2_4.jpg")
+      img(height = 350, width = 500, src = "2_4.jpg")
     }
     else if(input$site2== "2" & input$site1 == "4"){
-      img(height = 400, width = 600, src = "2_4.jpg")
+      img(height = 350, width = 500, src = "2_4.jpg")
     }
     
     else if(input$site1== "2" & input$site2 == "5"){
-      img(height = 400, width = 600, src = "2_5.jpg")
+      img(height = 350, width = 500, src = "2_5.jpg")
     }
     else if(input$site2== "2" & input$site1 == "5"){
-      img(height = 400, width = 600, src = "2_5.jpg")
+      img(height = 350, width = 500, src = "2_5.jpg")
     }
     
     else if(input$site1== "2" & input$site2 == "6"){
-      img(height = 400, width = 600, src = "2_6.jpg")
+      img(height = 350, width = 500, src = "2_6.jpg")
     }
     else if(input$site2== "2" & input$site1 == "6"){
-      img(height = 400, width = 600, src = "2_6.jpg")
+      img(height = 350, width = 500, src = "2_6.jpg")
     }
     
     else if(input$site1== "2" & input$site2 == "7"){
-      img(height = 400, width = 600, src = "2_7.jpg")
+      img(height = 350, width = 500, src = "2_7.jpg")
     }
     else if(input$site2== "2" & input$site1 == "7"){
-      img(height = 400, width = 600, src = "2_7.jpg")
+      img(height = 350, width = 500, src = "2_7.jpg")
     }
     
     else if(input$site1== "2" & input$site2 == "8"){
-      img(height = 400, width = 600, src = "2_8.jpg")
+      img(height = 350, width = 500, src = "2_8.jpg")
     }
     else if(input$site2== "2" & input$site1 == "8"){
-      img(height = 400, width = 600, src = "2_8.jpg")
+      img(height = 350, width = 500, src = "2_8.jpg")
     }
     
     else if(input$site1== "2" & input$site2 == "9"){
-      img(height = 400, width = 600, src = "2_9.jpg")
+      img(height = 350, width = 500, src = "2_9.jpg")
     }
     else if(input$site2== "2" & input$site1 == "9"){
-      img(height = 400, width = 600, src = "2_9.jpg")
+      img(height = 350, width = 500, src = "2_9.jpg")
     }
     
     else if(input$site1== "2" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "2_10.jpg")
+      img(height = 350, width = 500, src = "2_10.jpg")
     }
     else if(input$site2== "2" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "2_10.jpg")
+      img(height = 350, width = 500, src = "2_10.jpg")
     }
     
     else if(input$site1== "2" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "2_N.jpg")
+      img(height = 350, width = 500, src = "2_N.jpg")
     }
     else if(input$site2== "2" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "2_N.jpg")
+      img(height = 350, width = 500, src = "2_N.jpg")
     }
     
     else if(input$site1== "2" & input$site2 == "2"){
-      img(height = 400, width = 600, src = "2_N.jpg")
+      img(height = 350, width = 500, src = "2_N.jpg")
     }
     else if(input$site2== "2" & input$site1 == "2"){
-      img(height = 400, width = 600, src = "2_N.jpg")
+      img(height = 350, width = 500, src = "2_N.jpg")
     }
     
     else if(input$site1== "3" & input$site2 == "4"){
-      img(height = 400, width = 600, src = "3_4.jpg")
+      img(height = 350, width = 500, src = "3_4.jpg")
     }
     else if(input$site2== "3" & input$site1 == "4"){
-      img(height = 400, width = 600, src = "3_4.jpg")
+      img(height = 350, width = 500, src = "3_4.jpg")
     }
     
     else if(input$site1== "3" & input$site2 == "5"){
-      img(height = 400, width = 600, src = "3_5.jpg")
+      img(height = 350, width = 500, src = "3_5.jpg")
     }
     else if(input$site2== "3" & input$site1 == "5"){
-      img(height = 400, width = 600, src = "3_5.jpg")
+      img(height = 350, width = 500, src = "3_5.jpg")
     }
     else if(input$site1== "3" & input$site2 == "6"){
-      img(height = 400, width = 600, src = "3_6.jpg")
+      img(height = 350, width = 500, src = "3_6.jpg")
     }
     else if(input$site2== "3" & input$site1 == "6"){
-      img(height = 400, width = 600, src = "3_6.jpg")
+      img(height = 350, width = 500, src = "3_6.jpg")
     }
     
     else if(input$site1== "3" & input$site2 == "7"){
-      img(height = 400, width = 600, src = "3_7.jpg")
+      img(height = 350, width = 500, src = "3_7.jpg")
     }
     else if(input$site2== "3" & input$site1 == "7"){
-      img(height = 400, width = 600, src = "3_7.jpg")
+      img(height = 350, width = 500, src = "3_7.jpg")
     }
     
     else if(input$site1== "3" & input$site2 == "8"){
-      img(height = 400, width = 600, src = "3_8.jpg")
+      img(height = 350, width = 500, src = "3_8.jpg")
     }
     else if(input$site2== "3" & input$site1 == "8"){
-      img(height = 400, width = 600, src = "3_8.jpg")
+      img(height = 350, width = 500, src = "3_8.jpg")
     }
     
     else if(input$site1== "3" & input$site2 == "9"){
-      img(height = 400, width = 600, src = "3_9.jpg")
+      img(height = 350, width = 500, src = "3_9.jpg")
     }
     else if(input$site2== "3" & input$site1 == "9"){
-      img(height = 400, width = 600, src = "3_9.jpg")
+      img(height = 350, width = 500, src = "3_9.jpg")
     }
     
     else if(input$site1== "3" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "3_10.jpg")
+      img(height = 350, width = 500, src = "3_10.jpg")
     }
     else if(input$site2== "3" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "3_10.jpg")
+      img(height = 350, width = 500, src = "3_10.jpg")
     }
     
     else if(input$site1== "3" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "3_N.jpg")
+      img(height = 350, width = 500, src = "3_N.jpg")
     }
     else if(input$site2== "3" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "3_N.jpg")
+      img(height = 350, width = 500, src = "3_N.jpg")
     }
     
     else if(input$site1== "3" & input$site2 == "3"){
-      img(height = 400, width = 600, src = "3_N.jpg")
+      img(height = 350, width = 500, src = "3_N.jpg")
     }
     else if(input$site2== "3" & input$site1 == "3"){
-      img(height = 400, width = 600, src = "3_N.jpg")
+      img(height = 350, width = 500, src = "3_N.jpg")
     }
     
     else if(input$site1== "4" & input$site2 == "5"){
-      img(height = 400, width = 600, src = "4_5.jpg")
+      img(height = 350, width = 500, src = "4_5.jpg")
     }
     else if(input$site2== "4" & input$site1 == "5"){
-      img(height = 400, width = 600, src = "4_5.jpg")
+      img(height = 350, width = 500, src = "4_5.jpg")
     }
     
     else if(input$site1== "4" & input$site2 == "6"){
-      img(height = 400, width = 600, src = "4_6.jpg")
+      img(height = 350, width = 500, src = "4_6.jpg")
     }
     else if(input$site2== "4" & input$site1 == "6"){
-      img(height = 400, width = 600, src = "4_6.jpg")
+      img(height = 350, width = 500, src = "4_6.jpg")
     }
     
     else if(input$site1== "4" & input$site2 == "7"){
-      img(height = 400, width = 600, src = "4_7.jpg")
+      img(height = 350, width = 500, src = "4_7.jpg")
     }
     else if(input$site2== "4" & input$site1 == "7"){
-      img(height = 400, width = 600, src = "4_7.jpg")
+      img(height = 350, width = 500, src = "4_7.jpg")
     }
     
     else if(input$site1== "4" & input$site2 == "8"){
-      img(height = 400, width = 600, src = "4_8.jpg")
+      img(height = 350, width = 500, src = "4_8.jpg")
     }
     else if(input$site2== "4" & input$site1 == "8"){
-      img(height = 400, width = 600, src = "4_8.jpg")
+      img(height = 350, width = 500, src = "4_8.jpg")
     }
     
     else if(input$site1== "4" & input$site2 == "9"){
-      img(height = 400, width = 600, src = "4_9.jpg")
+      img(height = 350, width = 500, src = "4_9.jpg")
     }
     else if(input$site2== "4" & input$site1 == "9"){
-      img(height = 400, width = 600, src = "4_9.jpg")
+      img(height = 350, width = 500, src = "4_9.jpg")
     }
     
     else if(input$site1== "4" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "4_10.jpg")
+      img(height = 350, width = 500, src = "4_10.jpg")
     }
     else if(input$site2== "4" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "4_10.jpg")
+      img(height = 350, width = 500, src = "4_10.jpg")
     }
     
     else if(input$site1== "4" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "4_N.jpg")
+      img(height = 350, width = 500, src = "4_N.jpg")
     }
     else if(input$site2== "4" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "4_N.jpg")
+      img(height = 350, width = 500, src = "4_N.jpg")
     }
     
     else if(input$site1== "4" & input$site2 == "4"){
-      img(height = 400, width = 600, src = "4_N.jpg")
+      img(height = 350, width = 500, src = "4_N.jpg")
     }
     else if(input$site2== "4" & input$site1 == "4"){
-      img(height = 400, width = 600, src = "4_N.jpg")
+      img(height = 350, width = 500, src = "4_N.jpg")
     }
     
     else if(input$site1== "5" & input$site2 == "6"){
-      img(height = 400, width = 600, src = "5_6.jpg")
+      img(height = 350, width = 500, src = "5_6.jpg")
     }
     else if(input$site2== "5" & input$site1 == "6"){
-      img(height = 400, width = 600, src = "5_6.jpg")
+      img(height = 350, width = 500, src = "5_6.jpg")
     }
     
     else if(input$site1== "5" & input$site2 == "7"){
-      img(height = 400, width = 600, src = "5_7.jpg")
+      img(height = 350, width = 500, src = "5_7.jpg")
     }
     else if(input$site2== "5" & input$site1 == "7"){
-      img(height = 400, width = 600, src = "5_7.jpg")
+      img(height = 350, width = 500, src = "5_7.jpg")
     }
     
     else if(input$site1== "5" & input$site2 == "8"){
-      img(height = 400, width = 600, src = "5_8.jpg")
+      img(height = 350, width = 500, src = "5_8.jpg")
     }
     else if(input$site2== "5" & input$site1 == "8"){
-      img(height = 400, width = 600, src = "5_8.jpg")
+      img(height = 350, width = 500, src = "5_8.jpg")
     }
     
     else if(input$site1== "5" & input$site2 == "9"){
-      img(height = 400, width = 600, src = "5_9.jpg")
+      img(height = 350, width = 500, src = "5_9.jpg")
     }
     else if(input$site2== "5" & input$site1 == "9"){
-      img(height = 400, width = 600, src = "5_9.jpg")
+      img(height = 350, width = 500, src = "5_9.jpg")
     }
     
     else if(input$site1== "5" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "5_10.jpg")
+      img(height = 350, width = 500, src = "5_10.jpg")
     }
     else if(input$site2== "5" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "5_10.jpg")
+      img(height = 350, width = 500, src = "5_10.jpg")
     }
     
     else if(input$site1== "5" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "5_N.jpg")
+      img(height = 350, width = 500, src = "5_N.jpg")
     }
     else if(input$site2== "5" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "5_N.jpg")
+      img(height = 350, width = 500, src = "5_N.jpg")
     }
     
     else if(input$site1== "5" & input$site2 == "5"){
-      img(height = 400, width = 600, src = "5_N.jpg")
+      img(height = 350, width = 500, src = "5_N.jpg")
     }
     else if(input$site2== "5" & input$site1 == "5"){
-      img(height = 400, width = 600, src = "5_N.jpg")
+      img(height = 350, width = 500, src = "5_N.jpg")
     }
     
     else if(input$site1== "6" & input$site2 == "7"){
-      img(height = 400, width = 600, src = "6_7.jpg")
+      img(height = 350, width = 500, src = "6_7.jpg")
     }
     else if(input$site2== "6" & input$site1 == "7"){
-      img(height = 400, width = 600, src = "6_7.jpg")
+      img(height = 350, width = 500, src = "6_7.jpg")
     }
     else if(input$site1== "6" & input$site2 == "8"){
-      img(height = 400, width = 600, src = "6_8.jpg")
+      img(height = 350, width = 500, src = "6_8.jpg")
     }
     else if(input$site2== "6" & input$site1 == "8"){
-      img(height = 400, width = 600, src = "6_8.jpg")
+      img(height = 350, width = 500, src = "6_8.jpg")
     }
     
     else if(input$site1== "6" & input$site2 == "9"){
-      img(height = 400, width = 600, src = "6_9.jpg")
+      img(height = 350, width = 500, src = "6_9.jpg")
     }
     else if(input$site2== "6" & input$site1 == "9"){
-      img(height = 400, width = 600, src = "6_9.jpg")
+      img(height = 350, width = 500, src = "6_9.jpg")
     }
     else if(input$site1== "6" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "6_10.jpg")
+      img(height = 350, width = 500, src = "6_10.jpg")
     }
     else if(input$site2== "6" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "6_10.jpg")
+      img(height = 350, width = 500, src = "6_10.jpg")
     }
     else if(input$site1== "6" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "6_N.jpg")
+      img(height = 350, width = 500, src = "6_N.jpg")
     }
     else if(input$site2== "6" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "6_N.jpg")
+      img(height = 350, width = 500, src = "6_N.jpg")
     }
     
     else if(input$site1== "6" & input$site2 == "6"){
-      img(height = 400, width = 600, src = "6_N.jpg")
+      img(height = 350, width = 500, src = "6_N.jpg")
     }
     else if(input$site2== "6" & input$site1 == "6"){
-      img(height = 400, width = 600, src = "6_N.jpg")
+      img(height = 350, width = 500, src = "6_N.jpg")
     }
     
     else if(input$site1== "7" & input$site2 == "8"){
-      img(height = 400, width = 600, src = "7_8.jpg")
+      img(height = 350, width = 500, src = "7_8.jpg")
     }
     else if(input$site2== "7" & input$site1 == "8"){
-      img(height = 400, width = 600, src = "7_8.jpg")
+      img(height = 350, width = 500, src = "7_8.jpg")
     }
     
     else if(input$site1== "7" & input$site2 == "9"){
-      img(height = 400, width = 600, src = "7_9.jpg")
+      img(height = 350, width = 500, src = "7_9.jpg")
     }
     else if(input$site2== "7" & input$site1 == "9"){
-      img(height = 400, width = 600, src = "7_9.jpg")
+      img(height = 350, width = 500, src = "7_9.jpg")
     }
     
     else if(input$site1== "7" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "7_10.jpg")
+      img(height = 350, width = 500, src = "7_10.jpg")
     }
     else if(input$site2== "7" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "7_10.jpg")
+      img(height = 350, width = 500, src = "7_10.jpg")
     }
     
     else if(input$site1== "7" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "7_N.jpg")
+      img(height = 350, width = 500, src = "7_N.jpg")
     }
     else if(input$site2== "7" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "7_N.jpg")
+      img(height = 350, width = 500, src = "7_N.jpg")
     }
     
     else if(input$site1== "7" & input$site2 == "7"){
-      img(height = 400, width = 600, src = "7_N.jpg")
+      img(height = 350, width = 500, src = "7_N.jpg")
     }
     else if(input$site2== "7" & input$site1 == "7"){
-      img(height = 400, width = 600, src = "7_N.jpg")
+      img(height = 350, width = 500, src = "7_N.jpg")
     }
     
     else if(input$site1== "8" & input$site2 == "9"){
-      img(height = 400, width = 600, src = "8_9.jpg")
+      img(height = 350, width = 500, src = "8_9.jpg")
     }
     else if(input$site2== "8" & input$site1 == "9"){
-      img(height = 400, width = 600, src = "8_9.jpg")
+      img(height = 350, width = 500, src = "8_9.jpg")
     }
     
     else if(input$site1== "8" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "8_10.jpg")
+      img(height = 350, width = 500, src = "8_10.jpg")
     }
     else if(input$site2== "8" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "8_10.jpg")
+      img(height = 350, width = 500, src = "8_10.jpg")
     }
     
     else if(input$site1== "8" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "8_N.jpg")
+      img(height = 350, width = 500, src = "8_N.jpg")
     }
     else if(input$site2== "8" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "8_N.jpg")
+      img(height = 350, width = 500, src = "8_N.jpg")
     }
     
     else if(input$site1== "8" & input$site2 == "8"){
-      img(height = 400, width = 600, src = "8_N.jpg")
+      img(height = 350, width = 500, src = "8_N.jpg")
     }
     else if(input$site2== "8" & input$site1 == "8"){
-      img(height = 400, width = 600, src = "8_N.jpg")
+      img(height = 350, width = 500, src = "8_N.jpg")
     }
     
     else if(input$site1== "9" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "9_10.jpg")
+      img(height = 350, width = 500, src = "9_10.jpg")
     }
     else if(input$site2== "9" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "9_10.jpg")
+      img(height = 350, width = 500, src = "9_10.jpg")
     }
     
     else if(input$site1== "9" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "9_N.jpg")
+      img(height = 350, width = 500, src = "9_N.jpg")
     }
     else if(input$site2== "9" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "9_N.jpg")
+      img(height = 350, width = 500, src = "9_N.jpg")
     }
     
     else if(input$site1== "9" & input$site2 == "9"){
-      img(height = 400, width = 600, src = "9_N.jpg")
+      img(height = 350, width = 500, src = "9_N.jpg")
     }
     else if(input$site2== "9" & input$site1 == "9"){
-      img(height = 400, width = 600, src = "9_N.jpg")
+      img(height = 350, width = 500, src = "9_N.jpg")
     }
     
     else if(input$site1== "10" & input$site2 == "0"){
-      img(height = 400, width = 600, src = "10_N.jpg")
+      img(height = 350, width = 500, src = "10_N.jpg")
     }
     else if(input$site2== "10" & input$site1 == "0"){
-      img(height = 400, width = 600, src = "10_N.jpg")
+      img(height = 350, width = 500, src = "10_N.jpg")
     }
     
     else if(input$site1== "10" & input$site2 == "10"){
-      img(height = 400, width = 600, src = "10_N.jpg")
+      img(height = 350, width = 500, src = "10_N.jpg")
     }
     else if(input$site2== "10" & input$site1 == "10"){
-      img(height = 400, width = 600, src = "10_N.jpg")
+      img(height = 350, width = 500, src = "10_N.jpg")
     }
     
   })
@@ -1047,15 +1047,6 @@ server <- shinyServer(function(input, output) {
         
       }  
       
-<<<<<<< HEAD
-      # create the plot ----
-      p.windrose <- ggplot(data = data,
-                           aes(x = dir.binned,
-                               fill = spd.binned
-                               ,y = (..count..)/sum(..count..)
-                           ))+
-        geom_bar() + 
-=======
       
       # Create the labels:
       x_location <- pi # x location of the labels
@@ -1071,15 +1062,14 @@ server <- shinyServer(function(input, output) {
       
       
       # create the plot ---
-        
-        p.windrose <- ggplot() +
+      
+      p.windrose <- ggplot() +
         geom_bar(data = data,
                  aes(x = dir.binned, y = (..count..)/sum(..count..),
                      fill = spd.binned))+
         geom_text(data = labels,
                   aes(x=x, y=y, label = scales::percent(y, 1))) +
         scale_y_continuous(breaks = waiver(),labels=NULL)+
->>>>>>> 4b6cd0841af11cb79e1fb7861f52143c680eef87
         scale_x_discrete(drop = FALSE,
                          labels = c("N","NNE","NE","ENE", "E", 
                                     "ESE", "SE","SSE", 
@@ -1093,17 +1083,11 @@ server <- shinyServer(function(input, output) {
         theme(axis.title.x = element_blank(),
               axis.text = element_text(size=13, face= "bold"), 
               axis.title = element_text(size=13, face= "bold"),
-<<<<<<< HEAD
-              legend.text = element_text(size = 12)) + 
-        scale_y_continuous(labels = percent) +
-        ylab("Percentage Frequency")
-=======
-              legend.text = element_text(size = 12))
+              legend.text = element_text(size = 12),
+              axis.text.y=element_blank(),
+              axis.ticks.y=element_blank())
         
         
-   
->>>>>>> 4b6cd0841af11cb79e1fb7861f52143c680eef87
-      
       # adjust axes if required
       if (!is.na(countmax)){
         p.windrose <- p.windrose +
