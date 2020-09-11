@@ -71,7 +71,7 @@ ui <- fluidPage(
       dateRangeInput("date",
                      label =h5('DATE RANGE (input needed for Data Logger, Rolling Averages and Windrose Tabs)'),
                      start = Sys.Date() -45 , end = Sys.Date()),
-  
+      
       radioButtons("variable",
                    label = h5("OBSERVATIONS (input needed for Data Logger Measurements and Rolling Averages tabs)"),
                    choices = list("Salinity (ppt)" = "Salinity",
@@ -102,15 +102,15 @@ ui <- fluidPage(
       radioButtons("variable2",
                    label = h5("LAKEWATCH OBSERVATIONS"),         
                    choices = list(#"Salinity (ppt)" = "Salinity",
-                                  #"Conductivity (mS/cm)"= "Conductivity",
-                                  #"Temperature (C)" = "Temperature",
-                                  "Phosphorus (ug/L)" = "Phosphorus",
-                                  "Nitrogen (ug/L)" = "Nitrogen",
-                                  "Color (Pt-Co Units)" = "Color",
-                                  "Secchi (m)" = "Secchi",
-                                  "Chlorophyll (ug/L)" = "Chlorophyll"), 
+                     #"Conductivity (mS/cm)"= "Conductivity",
+                     #"Temperature (C)" = "Temperature",
+                     "Phosphorus (ug/L)" = "Phosphorus",
+                     "Nitrogen (ug/L)" = "Nitrogen",
+                     "Color (Pt-Co Units)" = "Color",
+                     "Secchi (m)" = "Secchi",
+                     "Chlorophyll (ug/L)" = "Chlorophyll"), 
                    selected = c("Phosphorus"))),
-      
+    
     
     
     # The display of the main panel
@@ -130,7 +130,7 @@ ui <- fluidPage(
                            h3("Data selection"),
                            p("Hourly observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range, Site and Comparison Site options. Select additional information such as the type of Observations and/or Temporal Resolution. An overlay of YSI/ Lakewatch measurements can also be added to this figure, in the Hourly Temporal Resolution. Missing observations are due to corrupt data or temporarily removed sensors."),
                            plotOutput("sensorplot", height = "600px"),
-                  downloadButton(outputId = "download_sensor", label = "Download this figure")),
+                           downloadButton(outputId = "download_sensor", label = "Download this figure")),
                   
                   tabPanel(title=" ALL SITES COMPARISON",
                            br(), 
@@ -138,7 +138,7 @@ ui <- fluidPage(
                            p("Daily mean observations are collected using data loggers (Diver and Star-Oddi) as of September 2017. Select the desired Date Range and variable.  Missing observations are due to corrupt data or temporarily removed sensors."),
                            plotOutput("allsites", height = "600px"),
                            downloadButton(outputId = "download_allsites", label = "Download this figure")),
-
+                  
                   tabPanel(title="ROLLING AVERAGES", 
                            br(), 
                            h3("Rolling averages definition"),
@@ -156,7 +156,7 @@ ui <- fluidPage(
                            p("A wind rose visualizes the frequency of winds blowing from a specific direction of a desired Date Range. The data used for this figure were collected via the `rnoaa` R Package at station CDRF1 (Cedar Key, Florida). The legend represents the wind speed ranging from low (2-4 m/s) to high (18-20 m/s) wind speeds. The cardinal directions on the outer part of the wind rose indicate the direction of the wind. The Frequency is displayed as the lowest to highest percentage frequency of a wind speed occuring in a given direction, by the size of the wind magnitude polygon. Wind data are updated periodically through USGS (monthly basis). If wind data are not displaying in this figure, please select a broader date range. Wind roses are subject to change as new wind data become available."),
                            plotOutput("wind_plot", height = "600px"),
                            downloadButton(outputId = "download_wind", label = "Download this wind rose"))
-                
+                  
       )           
     )
   )
@@ -286,7 +286,7 @@ server <- shinyServer(function(input, output) {
     wq1 <- wq %>% 
       filter(Date >= startDate & Date <= endDate) %>% 
       select(Site, Date, Measure = input$variable)
-  
+    
     
     wq2 <- wq1 %>%
       mutate(Date1 = date(Date)) %>%
@@ -298,7 +298,7 @@ server <- shinyServer(function(input, output) {
     df <- data.frame(Date = rep(d, 2)) %>%
       distinct() %>%
       left_join(wq2)
-  
+    
     # Remove Site 0 from the df we built
     wq2  <-  wq2 %>%
       filter(Site != 0) %>% 
@@ -325,10 +325,10 @@ server <- shinyServer(function(input, output) {
             axis.line = element_line(colour = "black"),
             panel.border = element_rect(colour = "black", fill=NA, size=1),
             axis.text.x = element_text(angle = 45, hjust = 1))
-  
-  
-  allsites
-  
+    
+    
+    allsites
+    
   })
   
   output$allsites <-renderPlot({
@@ -880,7 +880,7 @@ server <- shinyServer(function(input, output) {
     
     wq3$Rolling_Avg <- factor(wq3$Rolling_Avg, c("Three Days", "Seven Days", "Fifteen Days"))
     
-   
+    
     
     rollingplot<- wq3 %>% 
       drop_na("rolling_value") %>%
@@ -893,7 +893,7 @@ server <- shinyServer(function(input, output) {
       scale_x_datetime(date_labels = "%m-%d-%Y") +
       facet_wrap(~Site + Rolling_Avg, labeller = label_both) +
       theme(legend.position = "none", 
-        strip.text = element_text(size=15), 
+            strip.text = element_text(size=15), 
             axis.text = element_text(size=15), 
             axis.title = element_text(size=15),
             panel.background = element_blank(),
@@ -901,7 +901,7 @@ server <- shinyServer(function(input, output) {
             panel.grid.minor = element_blank(),
             axis.line = element_line(colour = "black"),
             panel.border = element_rect(colour = "black", fill=NA, size=1),
-        axis.text.x = element_text(angle = 45, hjust = 1))
+            axis.text.x = element_text(angle = 45, hjust = 1))
     
     rollingplot
     
@@ -1086,8 +1086,8 @@ server <- shinyServer(function(input, output) {
               legend.text = element_text(size = 12),
               axis.text.y=element_blank(),
               axis.ticks.y=element_blank())
-        
-        
+      
+      
       # adjust axes if required
       if (!is.na(countmax)){
         p.windrose <- p.windrose +
@@ -1103,15 +1103,15 @@ server <- shinyServer(function(input, output) {
     
     
     wind<-plot.windrose(spd = wind$wind_spd,
-                  dir = wind$wind_dir)
+                        dir = wind$wind_dir)
     
     wind
     
     
- })
+  })
   
   output$wind_plot <-renderPlot({
-   wind_plot()
+    wind_plot()
     
   })
   
@@ -1124,7 +1124,7 @@ server <- shinyServer(function(input, output) {
       ggsave(file,  wind_plot(), width = 10, height = 13)
     }
   )
-
+  
 })
 
 
