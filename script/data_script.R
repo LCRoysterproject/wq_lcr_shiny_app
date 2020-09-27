@@ -109,6 +109,15 @@ wq<-wq %>%
   filter(!(Site == 8 & Date > "2020-08-26 00:00:00" & Date < "2020-08-27 23:00:00"))
 
 
+#Removing observations from site 5, Flatilined during this whole duration, barnacle growing on sensor
+wq<-wq %>% 
+  filter(!(Site == 5 & Date > "2020-09-01 00:00:00" & Date < "2020-09-23 23:00:00"))
+
+#Removing observations from site 10, sensor dropped observation on last day, removing
+wq<-wq %>% 
+  filter(!(Site == 10 & Date > "2020-09-22 00:00:00" & Date < "2020-09-23 23:00:00"))
+
+
 
 
 #Removing all trial 
