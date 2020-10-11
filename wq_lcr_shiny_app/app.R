@@ -123,8 +123,7 @@ ui <- fluidPage(
                            p("Use the drop-down boxes Site and Comparison Site to dynamically change this map. The selected sites will be circled on the map."),
                            uiOutput("map",align = "left",
                                     style = 'float:left;'),
-                           img(src='shiny_app_map.jpg', align = "right",  height = "400px"),
-                           style = 'float:right;'),
+                           img(src='shiny_app_map.jpg', align = "left",  height = "400px")),
                   tabPanel(title="DATA LOGGER MEASUREMENTS",
                            br(), 
                            h3("Data selection"),
@@ -885,8 +884,8 @@ server <- shinyServer(function(input, output) {
     rollingplot<- wq3 %>% 
       drop_na("rolling_value") %>%
       ggplot(aes(x = Date, y = Measure)) +
-      geom_path(aes(y = rolling_value, 
-                    color = Rolling_Avg, group= Rolling_Avg),na.rm = TRUE, size = 1.1) +
+      geom_line(aes(y = rolling_value, 
+                    color = Rolling_Avg, group= 1),na.rm = TRUE, size = 1.1) +
       ylab(input$variable) + 
       xlab("Date")+
       ggtitle(paste("Rolling Averages of Sites ",input$site1, "and", input$site2)) +
