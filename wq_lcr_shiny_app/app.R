@@ -217,7 +217,7 @@ server <- shinyServer(function(input, output) {
     
     # Base version of the plot
     sensorplot <- ggplot(df, aes(x = as.POSIXct(Date), y = Measure)) +
-      ylab(input$variable) +
+      ggtitle(paste(input$variable, "(", input$date[1], "to",input$date[2], ")")) +
       xlab("Date") +
       geom_path(na.rm = TRUE) +
       scale_x_datetime(date_labels = "%m-%d-%Y") +
@@ -310,7 +310,7 @@ server <- shinyServer(function(input, output) {
       ylab(input$variable) +
       geom_path() +
       xlab("Date") +
-      ggtitle(paste("Daily Mean Observations of",input$variable)) +
+      ggtitle(paste("Daily Mean Observations of",input$variable, "(", input$date[1], "to",input$date[2], ")")) +
       scale_x_datetime(date_labels = "%m-%d-%Y") +
       theme_gray(base_size = 14) +
       theme(panel.border = element_rect(color = "black", size = 0.5, fill = NA, linetype="solid")) +
@@ -888,7 +888,7 @@ server <- shinyServer(function(input, output) {
                     color = Rolling_Avg, group= 1),na.rm = TRUE, size = 1.1) +
       ylab(input$variable) + 
       xlab("Date")+
-      ggtitle(paste("Rolling Averages of Sites ",input$site1, "and", input$site2)) +
+      ggtitle(paste("Rolling Averages of Sites ",input$site1, "and", input$site2,"(", input$date[1], "to",input$date[2], ")")) +
       scale_x_datetime(date_labels = "%m-%d-%Y") +
       facet_wrap(~Site + Rolling_Avg, labeller = label_both) +
       theme(legend.position = "none", 
@@ -1063,6 +1063,7 @@ server <- shinyServer(function(input, output) {
       # create the plot ---
       
       p.windrose <- ggplot() +
+        ggtitle(paste("Wind Rose Plot","(", input$date[1], "to",input$date[2], ")")) +
         geom_bar(data = data,
                  aes(x = dir.binned, y = (..count..)/sum(..count..),
                      fill = spd.binned))+
