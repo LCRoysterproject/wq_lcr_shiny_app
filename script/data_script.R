@@ -117,6 +117,10 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 10 & Date > "2020-09-22 00:00:00" & Date < "2020-09-23 23:00:00"))
 
+#Removing observations that were found on lost sensor 10072, do not need here
+wq<-wq %>% 
+  filter(!(Site == 2 & Date > "2020-07-30 00:00:00" & Sensor_ID == 36))
+
 
 
 

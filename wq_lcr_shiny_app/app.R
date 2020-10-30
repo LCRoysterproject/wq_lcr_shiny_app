@@ -97,7 +97,7 @@ ui <- fluidPage(
       
       dateRangeInput("date2",
                      label =h5('DATE RANGE (Lakewatch)'),
-                     start ="2019-02-01" , end = "2020-02-01"),
+                     start ="2019-02-01" , end = "2020-10-30"),
       
       radioButtons("variable2",
                    label = h5("LAKEWATCH OBSERVATIONS"),         
