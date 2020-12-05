@@ -121,6 +121,10 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 2 & Date > "2020-07-30 00:00:00" & Sensor_ID == 36))
 
+#Removing observations on these dates on site 3, they seem to be very sporadic, as well as too high, only these 5 days
+wq<-wq %>% 
+  filter(!(Site == 3 & Date > "2020-11-29 00:00:00" & Date < "2020-12-03 23:00:00"))
+
 
 
 
