@@ -126,6 +126,14 @@ wq<-wq %>%
   filter(!(Site == 3 & Date > "2020-11-29 00:00:00" & Date < "2020-12-03 23:00:00"))
 
 
+#Removing observations on these dates on site 7, they start getting way too high starting 12-28-2020
+wq<-wq %>% 
+  filter(!(Site == 7 & Date > "2020-12-28 00:00:00" & Date < "2021-01-03 23:00:00"))
+
+#Removing the last observation on these dates on site 2, just flat lined
+wq<-wq %>% 
+  filter(!(Site == 2 & Date > "2021-01-06 00:00:00" & Date < "2021-01-07 00:00:00"))
+
 
 
 #Removing all trial 
@@ -188,6 +196,7 @@ wind17 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2017)
 wind18 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2018)
 wind19 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2019)
 wind20 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2020)
+#wind21 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2021)
 wind <- rbind(wind17$data, wind18$data, wind19$data, wind20$data) %>% dplyr::distinct()
 
 write_rds(wind, "wq_lcr_shiny_app/data/wind.rds")
