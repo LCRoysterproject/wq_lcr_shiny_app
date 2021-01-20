@@ -135,6 +135,14 @@ wq<-wq %>%
   filter(!(Site == 2 & Date > "2021-01-06 00:00:00" & Date < "2021-01-07 00:00:00"))
 
 
+#Removing observations on these dates on site 7, these are very high salinity measurements
+wq<-wq %>% 
+  filter(!(Site == 7 & Date > "2021-01-03 00:00:00" & Date < "2021-01-19 23:00:00"))
+
+#Removing observations on these dates on site 9, these are very high salinity measurements
+wq<-wq %>% 
+  filter(!(Site == 9 & Date > "2020-12-020 00:00:00" & Date < "2021-01-13 23:00:00"))
+
 
 #Removing all trial 
 wq<-wq %>% 

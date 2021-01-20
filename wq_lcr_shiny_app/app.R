@@ -211,6 +211,7 @@ server <- shinyServer(function(input, output) {
     df <- df %>%
       filter(Site != 0)
     
+    
     # Adjusting Site's levels such that site1 goes before site2 regardless of
     # numerical order.
     df$Site <- factor_site_seq(df$Site, site1, site2)
@@ -289,7 +290,9 @@ server <- shinyServer(function(input, output) {
     
     wq2 <- wq1 %>%
       mutate(Date1 = date(Date)) %>%
-      group_by(Site, Date1) %>%
+      group_by(Site, Date1) %>% 
+      mutate(Date1 = as.Date(Date1)) %>%
+      complete(Date1 = seq.Date(min(Date1), max(Date1), by="day")) %>% 
       summarise(Measure = mean(Measure)) %>%
       select(Site, Date=Date1, Measure)
     
@@ -303,7 +306,8 @@ server <- shinyServer(function(input, output) {
       filter(Site != 0) %>% 
       filter(Site != 10)
     
-    wq2 $Site <- factor( wq2 $Site, levels = c("6", "1", "7", "5", "2", "8","4", "3", "9"))
+    
+    wq2 $Site <- factor(wq2 $Site, levels = c("6", "1", "7", "5", "2", "8","4", "3", "9"))
     
     # Base version of the plot
     allsites <- ggplot(wq2, aes(x = as.POSIXct(Date), y = Measure)) +
