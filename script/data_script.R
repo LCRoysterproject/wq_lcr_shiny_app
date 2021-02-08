@@ -160,6 +160,80 @@ wq<-wq %>%
   filter(!(Site ==23))
 
 
+wqs1<-wq %>%
+  filter(Site == 1) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs1['Site'] = as.numeric(1)
+
+wqs2<-wq %>%
+  filter(Site == 2) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs2['Site'] = as.numeric(2)
+
+wqs3<-wq %>%
+  filter(Site == 3) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs3['Site'] = as.numeric(3)
+
+wqs4<-wq %>%
+  filter(Site == 4) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs4['Site'] = as.numeric(4)
+
+wqs5<-wq %>%
+  filter(Site == 5) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs5['Site'] = as.numeric(5)
+
+wqs6<-wq %>%
+  filter(Site == 6) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs6['Site'] = as.numeric(6)
+
+wqs7<-wq %>%
+  filter(Site == 7) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs7['Site'] = as.numeric(7)
+
+wqs8<-wq %>%
+  filter(Site == 8) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs8['Site'] = as.numeric(8)
+
+wqs9<-wq %>%
+  filter(Site == 9) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs9['Site'] = as.numeric(9)
+
+wqs10<-wq %>%
+  filter(Site == 10) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs10['Site'] = as.numeric(10)
+
+
+wq<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8,wqs9,wqs10)
+
+
 #Writting as a .csv for the Shiny App
 write.csv(wq,file = "wq_lcr_shiny_app/data/wq.csv")
 

@@ -97,7 +97,7 @@ ui <- fluidPage(
       
       dateRangeInput("date2",
                      label =h5('DATE RANGE (Lakewatch)'),
-                     start ="2019-02-01" , end = "2020-10-30"),
+                     start ="2019-02-01" , end = "2021-01-01"),
       
       radioButtons("variable2",
                    label = h5("LAKEWATCH OBSERVATIONS"),         
@@ -295,6 +295,81 @@ server <- shinyServer(function(input, output) {
       complete(Date1 = seq.Date(min(Date1), max(Date1), by="day")) %>% 
       summarise(Measure = mean(Measure)) %>%
       select(Site, Date=Date1, Measure)
+
+    
+    wqs1<-wq2 %>%
+      filter(Site == 1) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs1['Site'] = as.numeric(1)
+    
+    wqs2<-wq2 %>%
+      filter(Site == 2) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs2['Site'] = as.numeric(2)
+    
+    wqs3<-wq2 %>%
+      filter(Site == 3) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs3['Site'] = as.numeric(3)
+    
+    wqs4<-wq2 %>%
+      filter(Site == 4) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs4['Site'] = as.numeric(4)
+    
+    wqs5<-wq2 %>%
+      filter(Site == 5) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs5['Site'] = as.numeric(5)
+    
+    wqs6<-wq2 %>%
+      filter(Site == 6) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs6['Site'] = as.numeric(6)
+    
+    wqs7<-wq2 %>%
+      filter(Site == 7) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs7['Site'] = as.numeric(7)
+    
+    wqs8<-wq2 %>%
+      filter(Site == 8) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs8['Site'] = as.numeric(8)
+    
+    wqs9<-wq2 %>%
+      filter(Site == 9) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs9['Site'] = as.numeric(9)
+    
+    wqs10<-wq2 %>%
+      filter(Site == 10) %>% 
+      mutate(Date = as.Date(Date)) %>%
+      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    
+    wqs10['Site'] = as.numeric(10)
+    
+    
+    wq2<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8,wqs9,wqs10) 
+    
     
     d <- seq(startDate, endDate, by = "day") %>% date
     df <- data.frame(Date = rep(d, 2)) %>%
@@ -882,8 +957,7 @@ server <- shinyServer(function(input, output) {
                           cols = c("Three Days", "Seven Days", "Fifteen Days")) 
     
     wq3$Rolling_Avg <- factor(wq3$Rolling_Avg, c("Three Days", "Seven Days", "Fifteen Days"))
-    
-    
+
     
     rollingplot<- wq3 %>% 
       drop_na("rolling_value") %>%
