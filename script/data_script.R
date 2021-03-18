@@ -79,16 +79,16 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 4 & Date > "2019-08-28 23:00:00" & Date < "2019-09-10 23:00:00"))
 
-#Removing observations from site 4, Flatiline in mid October
+#Removing observations from site 4, Flatline in mid October
 wq<-wq %>% 
   filter(!(Site == 4 & Date > "2019-10-14 23:00:00" & Date < "2019-11-04 23:00:00"))
 
-#Removing observations from site 2, Flatiline in early October 
+#Removing observations from site 2, Flatline in early October 
 wq<-wq %>% 
   filter(!(Site == 2 & Date > "2019-10-01 23:00:00" & Date < "2019-10-15 23:00:00"))
 
 
-#Removing observations from site 4, Flatilined and muddy starting november 12- november 18
+#Removing observations from site 4, Flatlined and muddy starting november 12- november 18
 wq<-wq %>% 
   filter(!(Site == 4 & Date > "2019-11-11 23:00:00" & Date < "2019-11-18 23:00:00"))
 
@@ -100,16 +100,16 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 5 & Date > "2020-07-15 00:00:00" & Date < "2020-07-31 00:00:00"))
 
-#Removing observations from site 10, Flatilined on last day
+#Removing observations from site 10, Flatlined on last day
 wq<-wq %>% 
   filter(!(Site == 10 & Date > "2020-08-26 00:00:00" & Date < "2020-08-27 23:00:00"))
 
-#Removing observations from site 8, Flatilined on last observation
+#Removing observations from site 8, Flatlined on last observation
 wq<-wq %>% 
   filter(!(Site == 8 & Date > "2020-08-26 00:00:00" & Date < "2020-08-27 23:00:00"))
 
 
-#Removing observations from site 5, Flatilined during this whole duration, barnacle growing on sensor
+#Removing observations from site 5, Flatlined during this whole duration, barnacle growing on sensor
 wq<-wq %>% 
   filter(!(Site == 5 & Date > "2020-09-01 00:00:00" & Date < "2020-09-23 23:00:00"))
 
