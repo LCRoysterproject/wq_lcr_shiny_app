@@ -96,7 +96,7 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Date > "2020-04-09 23:00:00" & Date < "2020-06-10 23:00:00"))
 
-#Removing observations from site 5, flatlines
+#Removing observations from site 5, flatlined
 wq<-wq %>% 
   filter(!(Site == 5 & Date > "2020-07-15 00:00:00" & Date < "2020-07-31 00:00:00"))
 
@@ -134,7 +134,6 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 2 & Date > "2021-01-06 00:00:00" & Date < "2021-01-07 00:00:00"))
 
-
 #Removing observations on these dates on site 7, these are very high salinity measurements
 wq<-wq %>% 
   filter(!(Site == 7 & Date > "2021-01-03 00:00:00" & Date < "2021-01-19 23:00:00"))
@@ -148,10 +147,9 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 0))
 
+#Annalees sensors
 wq<-wq %>% 
   filter(!(Site == 11))
-
-#Annalees sensors
 wq<-wq %>% 
   filter(!(Site == 21))
 wq<-wq %>% 
@@ -231,7 +229,21 @@ wqs10<-wq %>%
 wqs10['Site'] = as.numeric(10)
 
 
-wq<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8,wqs9,wqs10)
+wqs12<-wq %>%
+  filter(Site == 12) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs12['Site'] = as.numeric(12)
+
+wqs13<-wq %>%
+  filter(Site == 13) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs13['Site'] = as.numeric(13)
+
+wq<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8, wqs9,wqs10, wqs12, wqs13)
 
 
 #Writting as a .csv for the Shiny App
