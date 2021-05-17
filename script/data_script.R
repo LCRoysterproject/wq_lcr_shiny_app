@@ -142,6 +142,9 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 9 & Date > "2020-12-020 00:00:00" & Date < "2021-01-13 23:00:00"))
 
+#Removing observations on these dates on site 6, flat lined
+wq<-wq %>%
+  filter(!(Site == 6 & Date > "2021-04-01 00:00:00" & Date < "2021-04-13 23:00:00"))
 
 #Removing all trial 
 wq<-wq %>% 
@@ -294,5 +297,6 @@ wind21 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2021)
 wind <- rbind(wind17$data, wind18$data, wind19$data, wind20$data, wind21$data) %>% dplyr::distinct()
 
 write_rds(wind, "wq_lcr_shiny_app/data/wind.rds")
+
 
 
