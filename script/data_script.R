@@ -142,9 +142,17 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 9 & Date > "2020-12-020 00:00:00" & Date < "2021-01-13 23:00:00"))
 
-#Removing observations on these dates on site 6, flat lined
+#Removing observations on these dates on site 6, flat lined MSR
 wq<-wq %>%
   filter(!(Site == 6 & Date > "2021-04-01 00:00:00" & Date < "2021-04-13 23:00:00"))
+
+# #Removing observations on these dates on site 3, flat lined MSR
+wq<-wq %>%
+  filter(!(Site == 3 & Date > "2021-06-04 00:00:00" & Date < "2021-06-18 19:00:00"))
+
+# #Removing observations on these dates on site 12, flat lined MSR
+wq<-wq %>%
+  filter(!(Site == 12 & Date > "2021-05-18 00:00:00" & Date < "2021-06-10 19:00:00"))
 
 #Removing all trial 
 wq<-wq %>% 
@@ -246,12 +254,25 @@ wqs13<-wq %>%
 
 wqs13['Site'] = as.numeric(13)
 
-wq<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8, wqs9,wqs10, wqs12, wqs13)
+wqs103<-wq %>%
+  filter(Site == 103) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs103['Site'] = as.numeric(103)
+
+wqs104<-wq %>%
+  filter(Site == 104) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs104['Site'] = as.numeric(104)
+
+wq<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8, wqs9,wqs10, wqs12, wqs13, wqs103, wqs104)
 
 
 #Writting as a .csv for the Shiny App
 write.csv(wq,file = "wq_lcr_shiny_app/data/wq.csv")
-
 
 
 ###Lakewatch and YSI Data, from the MySQL workbench
@@ -297,6 +318,7 @@ wind21 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2021)
 wind <- rbind(wind17$data, wind18$data, wind19$data, wind20$data, wind21$data) %>% dplyr::distinct()
 
 write_rds(wind, "wq_lcr_shiny_app/data/wind.rds")
+
 
 
 
