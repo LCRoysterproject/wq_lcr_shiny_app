@@ -146,13 +146,17 @@ wq<-wq %>%
 wq<-wq %>%
   filter(!(Site == 6 & Date > "2021-04-01 00:00:00" & Date < "2021-04-13 23:00:00"))
 
-# #Removing observations on these dates on site 3, flat lined MSR
+#Removing observations on these dates on site 3, flat lined MSR
 wq<-wq %>%
   filter(!(Site == 3 & Date > "2021-06-04 00:00:00" & Date < "2021-06-18 19:00:00"))
 
-# #Removing observations on these dates on site 12, flat lined MSR
+#Removing observations on these dates on site 12, flat lined MSR
 wq<-wq %>%
   filter(!(Site == 12 & Date > "2021-05-18 00:00:00" & Date < "2021-06-10 19:00:00"))
+
+#Removing observations on these dates on site 5, flat lined
+wq<-wq %>%
+  filter(!(Site == 5 & Date > "2021-07-19 11:00:00" & Date < "2021-08-11 15:00:00"))
 
 #Removing all trial 
 wq<-wq %>% 
