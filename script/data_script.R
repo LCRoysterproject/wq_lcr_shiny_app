@@ -258,6 +258,13 @@ wqs13<-wq %>%
 
 wqs13['Site'] = as.numeric(13)
 
+wqs101<-wq %>%
+  filter(Site == 101) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs101['Site'] = as.numeric(101)
+
 wqs103<-wq %>%
   filter(Site == 103) %>% 
   mutate(Obs_Date = as.Date(Obs_Date)) %>%
@@ -272,7 +279,14 @@ wqs104<-wq %>%
 
 wqs104['Site'] = as.numeric(104)
 
-wq<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8, wqs9,wqs10, wqs12, wqs13, wqs103, wqs104)
+wqs106<-wq %>%
+  filter(Site == 106) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs106['Site'] = as.numeric(106)
+
+wq<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8, wqs9,wqs10, wqs12, wqs13, wqs101, wqs103, wqs104, wqs106)
 
 
 #Writting as a .csv for the Shiny App
