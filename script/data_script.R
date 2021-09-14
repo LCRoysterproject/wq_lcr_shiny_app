@@ -312,6 +312,8 @@ lab$Secchi<- (lab$Secchi/ 3.28)
 lab$Sensor_Type[lab$Sensor_Type == "34"] <- "LAKEWATCH"
 lab$Sensor_Type[lab$Sensor_Type == "35"] <- "YSI"
 lab$Sensor_Type[lab$Sensor_Type == "37"] <- "YSI"
+lab$Sensor_Type[lab$Sensor_Type == "53"] <- "YSI"
+
 
 lab<-lab %>% 
   filter(!(Site == 0))
