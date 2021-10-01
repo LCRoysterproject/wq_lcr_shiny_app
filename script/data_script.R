@@ -324,7 +324,7 @@ write.csv(lab, file = "wq_lcr_shiny_app/data/lab.csv")
 lakewatch<-lab %>% 
   filter(Sensor_Type == "LAKEWATCH")
 
-write.csv(lab, file = "wq_lcr_shiny_app/data/lakewatch.csv")
+write.csv(lakewatch, file = "wq_lcr_shiny_app/data/lakewatch.csv")
 
 
 
