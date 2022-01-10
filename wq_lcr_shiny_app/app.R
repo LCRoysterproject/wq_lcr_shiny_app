@@ -11,7 +11,6 @@ library("RColorBrewer")
 library("scales")
 
 #Make sure to be on the project directory before starting the Shiny App
-
 #Reading in the files from the "data" tab
 lab <- read.csv("data/lab.csv", header= T) 
 wq <- read.csv("data/wq.csv", header= T) 
@@ -339,37 +338,121 @@ server <- shinyServer(function(input, output) {
     
     wqs6['Site'] = as.numeric(6)
     
+    if(nrow(subset(wq2,Site == 7)) != 0){
     wqs7<-wq2 %>%
       filter(Site == 7) %>% 
       mutate(Date = as.Date(Date)) %>%
       complete(Date = seq.Date(min(Date), max(Date), by="day"))
-    
+    } else {
+      wqs7<-wq2[0,]
+      }
     wqs7['Site'] = as.numeric(7)
     
-    wqs8<-wq2 %>%
-      filter(Site == 8) %>% 
-      mutate(Date = as.Date(Date)) %>%
-      complete(Date = seq.Date(min(Date), max(Date), by="day"))
-    
+    if(nrow(subset(wq2,Site == 8)) != 0){
+      wqs8<-wq2 %>%
+        filter(Site == 8) %>% 
+        mutate(Date = as.Date(Date)) %>%
+        complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    } else {
+      wqs8<-wq2[0,]
+    }
     wqs8['Site'] = as.numeric(8)
     
-    wqs9<-wq2 %>%
-      filter(Site == 9) %>% 
-      mutate(Date = as.Date(Date)) %>%
-      complete(Date = seq.Date(min(Date), max(Date), by="day"))
-    
+    if(nrow(subset(wq2,Site == 9)) != 0){
+      wqs9<-wq2 %>%
+        filter(Site == 9) %>% 
+        mutate(Date = as.Date(Date)) %>%
+        complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    } else {
+      wqs9<-wq2[0,]
+    }
     wqs9['Site'] = as.numeric(9)
     
-    wqs10<-wq2 %>%
-      filter(Site == 10) %>% 
-      mutate(Date = as.Date(Date)) %>%
-      complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    if(nrow(subset(wq2,Site == 10)) != 0){
+      wqs10<-wq2 %>%
+        filter(Site == 10) %>% 
+        mutate(Date = as.Date(Date)) %>%
+        complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    } else {
+      wqs10<-wq2[0,]
+    }
+    wqs7['Site'] = as.numeric(7)
     
-    wqs10['Site'] = as.numeric(10)
+    #Commenthing out the old sensors. 12->102 & 13->105
+    # wqs12<-wq %>%
+    #   filter(Site == 12) %>% 
+    #   mutate(Date = as.Date(Date)) %>%
+    #   complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    # 
+    # wqs12['Site'] = as.numeric(12)
+    # 
+    # wqs13<-wq %>%
+    #   filter(Site == 13) %>% 
+    #   mutate(Date = as.Date(Date)) %>%
+    #   complete(Date = seq.Date(min(Date), max(Date), by="day"))
     
     
-    wq2<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8,wqs9,wqs10) 
+    if(nrow(subset(wq2,Site == 101)) != 0){
+      wqs101<-wq2 %>%
+        filter(Site == 101) %>% 
+        mutate(Date = as.Date(Date)) %>%
+        complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    } else {
+      wqs101<-wq2[0,]
+    }
+    wqs101['Site'] = as.numeric(101)
     
+    if(nrow(subset(wq2,Site == 102)) != 0){
+      wqs102<-wq2 %>%
+        filter(Site == 102) %>% 
+        mutate(Date = as.Date(Date)) %>%
+        complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    } else {
+      wqs102<-wq2[0,]
+    }
+    wqs102['Site'] = as.numeric(102)
+    
+    if(nrow(subset(wq2,Site == 101)) != 0){
+      wqs103<-wq2 %>%
+        filter(Site == 103) %>% 
+        mutate(Date = as.Date(Date)) %>%
+        complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    } else {
+      wqs103<-wq2[0,]
+    }
+    wqs103['Site'] = as.numeric(103)
+    
+    if(nrow(subset(wq2,Site == 101)) != 0){
+      wqs104<-wq2 %>%
+        filter(Site == 104) %>% 
+        mutate(Date = as.Date(Date)) %>%
+        complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    } else {
+      wqs104<-wq2[0,]
+    }
+    wqs104['Site'] = as.numeric(104)
+    
+    if(nrow(subset(wq2,Site == 105)) != 0){
+      wqs105<-wq2 %>%
+        filter(Site == 105) %>% 
+        mutate(Date = as.Date(Date)) %>%
+        complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    } else {
+      wqs105<-wq2[0,]
+    }
+    wqs105['Site'] = as.numeric(105)
+    
+    if(nrow(subset(wq2,Site == 106)) != 0){
+      wqs106<-wq2 %>%
+        filter(Site == 106) %>% 
+        mutate(Date = as.Date(Date)) %>%
+        complete(Date = seq.Date(min(Date), max(Date), by="day"))
+    } else {
+      wqs106<-wq2[0,]
+    }
+    wqs106['Site'] = as.numeric(106)
+    
+    wq2<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8, wqs9,wqs10, wqs101, wqs102, wqs103, wqs104, wqs105, wqs106)
     
     d <- seq(startDate, endDate, by = "day") %>% date
     df <- data.frame(Date = rep(d, 2)) %>%
@@ -378,11 +461,9 @@ server <- shinyServer(function(input, output) {
     
     # Remove Site 0 from the df we built
     wq2  <-  wq2 %>%
-      filter(Site != 0) %>% 
-      filter(Site != 10)
+      filter(Site != 0)
     
-    
-    wq2 $Site <- factor(wq2 $Site, levels = c("6", "1", "7", "5", "2", "8","4", "3", "9"))
+    wq2$Site <- factor(wq2$Site)
     
     # Base version of the plot
     allsites <- ggplot(wq2, aes(x = as.POSIXct(Date), y = Measure)) +

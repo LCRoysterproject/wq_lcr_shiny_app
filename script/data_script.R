@@ -158,6 +158,10 @@ wq<-wq %>%
 wq<-wq %>%
   filter(!(Site == 5 & Date > "2021-07-19 11:00:00" & Date < "2021-08-11 15:00:00"))
 
+#Removing observations on these dates on site 5, flat lined
+wq<-wq %>%
+  filter(!(Site == 101 & Date > "2021-11-01 00:00:00" & Date < "2021-11-10 20:00:00"))
+
 #Removing all trial 
 wq<-wq %>% 
   filter(!(Site == 0))
@@ -243,20 +247,19 @@ wqs10<-wq %>%
 
 wqs10['Site'] = as.numeric(10)
 
+#Commenthing out the old sensors. 12->102 & 13->105
+# wqs12<-wq %>%
+#   filter(Site == 12) %>% 
+#   mutate(Obs_Date = as.Date(Obs_Date)) %>%
+#   complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+# 
+# wqs12['Site'] = as.numeric(12)
+# 
+# wqs13<-wq %>%
+#   filter(Site == 13) %>% 
+#   mutate(Obs_Date = as.Date(Obs_Date)) %>%
+#   complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
 
-wqs12<-wq %>%
-  filter(Site == 12) %>% 
-  mutate(Obs_Date = as.Date(Obs_Date)) %>%
-  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
-
-wqs12['Site'] = as.numeric(12)
-
-wqs13<-wq %>%
-  filter(Site == 13) %>% 
-  mutate(Obs_Date = as.Date(Obs_Date)) %>%
-  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
-
-wqs13['Site'] = as.numeric(13)
 
 wqs101<-wq %>%
   filter(Site == 101) %>% 
@@ -264,6 +267,13 @@ wqs101<-wq %>%
   complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
 
 wqs101['Site'] = as.numeric(101)
+
+wqs102<-wq %>%
+  filter(Site == 102) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs102['Site'] = as.numeric(102)
 
 wqs103<-wq %>%
   filter(Site == 103) %>% 
@@ -279,6 +289,13 @@ wqs104<-wq %>%
 
 wqs104['Site'] = as.numeric(104)
 
+wqs105<-wq %>%
+  filter(Site == 105) %>% 
+  mutate(Obs_Date = as.Date(Obs_Date)) %>%
+  complete(Obs_Date = seq.Date(min(Obs_Date), max(Obs_Date), by="day"))
+
+wqs105['Site'] = as.numeric(105)
+
 wqs106<-wq %>%
   filter(Site == 106) %>% 
   mutate(Obs_Date = as.Date(Obs_Date)) %>%
@@ -286,7 +303,7 @@ wqs106<-wq %>%
 
 wqs106['Site'] = as.numeric(106)
 
-wq<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8, wqs9,wqs10, wqs12, wqs13, wqs101, wqs103, wqs104, wqs106)
+wq<- rbind(wqs1,wqs2,wqs3,wqs4,wqs5,wqs6,wqs7,wqs8, wqs9,wqs10, wqs101, wqs102, wqs103, wqs104, wqs105, wqs106)
 
 
 #Writting as a .csv for the Shiny App
