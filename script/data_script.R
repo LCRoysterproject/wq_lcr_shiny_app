@@ -162,6 +162,9 @@ wq<-wq %>%
 wq<-wq %>%
   filter(!(Site == 101 & Date > "2021-11-01 00:00:00" & Date < "2021-11-10 20:00:00"))
 
+wq<-wq %>% 
+  filter(!(Site == 103 & Date > "2022-03-17 00:00:00" & Date < "2022-04-27 20:00:00"))
+
 #Removing all trial 
 wq<-wq %>% 
   filter(!(Site == 0))
