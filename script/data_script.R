@@ -162,6 +162,8 @@ wq<-wq %>%
 wq<-wq %>%
   filter(!(Site == 101 & Date > "2021-11-01 00:00:00" & Date < "2021-11-10 20:00:00"))
 
+#Removing observations on these dates on site 
+
 #Removing all trial 
 wq<-wq %>% 
   filter(!(Site == 0))
