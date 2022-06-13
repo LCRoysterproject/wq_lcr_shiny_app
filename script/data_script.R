@@ -354,7 +354,8 @@ wind18 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2018)
 wind19 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2019)
 wind20 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2020)
 wind21 <- buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2021)
-wind <- rbind(wind17$data, wind18$data, wind19$data, wind20$data, wind21$data) %>% dplyr::distinct()
+wind22 <-buoy(dataset='cwind',buoyid='CDRF1', datatype='c', year=2022)
+wind <- rbind(wind17$data, wind18$data, wind19$data, wind20$data, wind21$data, wind22$data) %>% dplyr::distinct()
 
 write_rds(wind, "wq_lcr_shiny_app/data/wind.rds")
 
