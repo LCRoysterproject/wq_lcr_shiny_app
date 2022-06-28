@@ -9,6 +9,7 @@ library("rnoaa")
 library("plotly")
 library("RColorBrewer")
 library("scales")
+library(shiny)
 
 #Make sure to be on the project directory before starting the Shiny App
 #Reading in the files from the "data" tab
