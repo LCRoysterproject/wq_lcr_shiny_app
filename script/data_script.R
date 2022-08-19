@@ -162,7 +162,16 @@ wq<-wq %>%
 wq<-wq %>%
   filter(!(Site == 101 & Date > "2021-11-01 00:00:00" & Date < "2021-11-10 20:00:00"))
 
-#Removing observations on these dates on site 
+#Removing observations on these dates on site 104, sensor was running before deployment.
+wq<-wq %>% 
+  filter(!(Site == 104 & Sensor_ID == 55 & Date >= "2022-03-18 18:00:00 UTC" & Date <= "2022-07-21 19:00:00 UTC"))
+
+#Removing observations from sensor malfunction on site 5.
+wq<-wq %>% 
+  filter(!(Site == 5 & Date >= "2022-07-09 00:00:00 CST" & Date <= "2022-07-21 14:00:00 CST"))
+#Removing observations from sensor flatline at site 3.
+wq<-wq %>% 
+  filter(!(Site == 3 & Date >= "2022-08-04 00:00:00 CST" & Date <"2022-08-15 13:00:00"))
 
 #Removing all trial 
 wq<-wq %>% 
