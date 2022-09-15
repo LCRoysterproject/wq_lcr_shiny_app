@@ -171,7 +171,7 @@ wq<-wq %>%
   filter(!(Site == 5 & Date >= "2022-07-09 00:00:00 CST" & Date <= "2022-07-21 14:00:00 CST"))
 #Removing observations from sensor flatline at site 3.
 wq<-wq %>% 
-  filter(!(Site == 3 & Date >= "2022-08-04 00:00:00 CST" & Date <"2022-08-15 13:00:00"))
+  filter(!(Site == 3 & Date >= "2022-08-04 00:00:00 CST" & Date <"2022-09-06 12:00:00"))
 
 #Removing all trial 
 wq<-wq %>% 
