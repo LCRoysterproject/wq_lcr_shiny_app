@@ -184,6 +184,18 @@ wq<-wq %>%
 wq<-wq %>% 
   filter(!(Site == 101 & Date >= "2022-09-20 11:00:00" & Date <= "2022-10-06 17:00:00"))
 
+#Removing observations from sensor flatline at site 104.
+wq<-wq %>% 
+  filter(!(Site == 104 & Date >= "2022-10-23 00:00:00" & Date <= "2022-11-18 00:00:00"))
+
+#Removing observations from sensor flatline at site 103.
+wq<-wq %>% 
+  filter(!(Site == 103 & Date >= "2022-10-23 00:00:00" & Date <= "2023-01-13 00:00:00"))
+
+#Removing observations from sensor flatline at site 105.
+wq<-wq %>% 
+  filter(!(Site == 103 & Date >= "2022-12-21 00:00:00" & Date <= "2023-01-13 00:00:00"))
+
 #Removing all trial 
 wq<-wq %>% 
   filter(!(Site == 0))
